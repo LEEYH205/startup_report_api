@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가맹점수 분석 차트 예시</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            padding: 20px;
+        }
+        .chart {
+            width: 100%;
+            height: 500px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .description {
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏪 가맹점수 분석 대시보드</h1>
+    <p class="description">2017년~2024년 업종별 가맹점수 변화 추이 및 평균 비교</p>
+    
+    <div class="chart-container">
+        <h2>📈 연도별 업종별 총 가맹점수 추이</h2>
+        <div id="lineChart" class="chart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <h2>📊 업종별 전체 기간 평균 가맹점수</h2>
+        <div id="barChart" class="chart"></div>
+    </div>
+
+    <script>
+        // 차트 초기화
+        const lineChart = echarts.init(document.getElementById('lineChart'));
+        const barChart = echarts.init(document.getElementById('barChart'));
+        
+        // 라인 차트 옵션
+        const lineOption = {
+            "title": {
+                "text": "연도별 업종별 총 가맹점수 추이",
+                "left": "center",
+                "textStyle": {"fontSize": 16, "fontWeight": "bold"}
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "formatter": "{b}년<br/>{a}: {c}개"
+            },
+            "legend": {
+                "data": ["도소매", "서비스", "외식"],
+                "top": 30
+            },
+            "grid": {
+                "left": "3%",
+                "right": "4%",
+                "bottom": "3%",
+                "containLabel": true
+            },
+            "xAxis": {
+                "type": "category",
+                "boundaryGap": false,
+                "data": [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+                "name": "연도",
+                "nameLocation": "middle",
+                "nameGap": 30
+            },
+            "yAxis": {
+                "type": "value",
+                "name": "총 가맹점수",
+                "nameLocation": "middle",
+                "nameGap": 50
+            },
+            "series": [
+                {
+                    "name": "도소매",
+                    "type": "line",
+                    "data": [48324, 54194, 55581, 56897, 60874, 63470, 59843, 69293],
+                    "symbol": "circle",
+                    "symbolSize": 6,
+                    "lineStyle": {"width": 2},
+                    "itemStyle": {"color": "#1f77b4"}
+                },
+                {
+                    "name": "서비스",
+                    "type": "line",
+                    "data": [65164, 69518, 69948, 68071, 75102, 93298, 87107, 113790],
+                    "symbol": "rect",
+                    "symbolSize": 6,
+                    "lineStyle": {"width": 2},
+                    "itemStyle": {"color": "#ff7f0e"}
+                },
+                {
+                    "name": "외식",
+                    "type": "line",
+                    "data": [101737, 111586, 117368, 125550, 131085, 157192, 156638, 175768],
+                    "symbol": "triangle",
+                    "symbolSize": 6,
+                    "lineStyle": {"width": 2},
+                    "itemStyle": {"color": "#2ca02c"}
+                }
+            ]
+        };
+        
+        // 바 차트 옵션
+        const barOption = {
+            "title": {
+                "text": "업종별 전체 기간 평균 가맹점수",
+                "left": "center",
+                "textStyle": {"fontSize": 16, "fontWeight": "bold"}
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "formatter": "{b}: {c}개"
+            },
+            "grid": {
+                "left": "3%",
+                "right": "4%",
+                "bottom": "3%",
+                "containLabel": true
+            },
+            "xAxis": {
+                "type": "category",
+                "data": ["도소매", "서비스", "외식"],
+                "name": "업종",
+                "nameLocation": "middle",
+                "nameGap": 30
+            },
+            "yAxis": {
+                "type": "value",
+                "name": "평균 가맹점수 (개)",
+                "nameLocation": "middle",
+                "nameGap": 50
+            },
+            "series": [
+                {
+                    "name": "평균 가맹점수",
+                    "type": "bar",
+                    "data": [
+                        {"value": 11565, "itemStyle": {"color": "#87ceeb"}},
+                        {"value": 11078, "itemStyle": {"color": "#90ee90"}},
+                        {"value": 19369, "itemStyle": {"color": "#fa8072"}}
+                    ],
+                    "barWidth": "60%",
+                    "label": {
+                        "show": true,
+                        "position": "top",
+                        "formatter": "{c}개"
+                    }
+                }
+            ]
+        };
+        
+        // 차트 렌더링
+        lineChart.setOption(lineOption);
+        barChart.setOption(barOption);
+        
+        // 반응형 처리
+        window.addEventListener('resize', function() {
+            lineChart.resize();
+            barChart.resize();
+        });
+    </script>
+</body>
+</html>
