@@ -45,41 +45,64 @@
 
 ## 🚀 빠른 시작
 
-### 1. 시스템 요구사항
-- Python 3.8+
-- pip (Python 패키지 관리자)
-- Git
+### 설치
 
-### 2. 가상환경 설정 및 의존성 설치
+#### Git에서 직접 설치
 ```bash
-cd 08_chart_api_server
+# 프로젝트 클론
+git clone https://github.com/LEEYH205/startup_report_api.git
+cd startup_report_api
+```
 
-# 자동 설정 스크립트 실행 (권장)
-./setup_and_test.sh
+#### 로컬에서 설치
+```bash
+# 프로젝트 클론
+git clone https://github.com/LEEYH205/startup_report_api.git
+cd startup_report_api
 
-# 또는 수동으로 설정
+# 가상환경 생성 및 활성화
 python -m venv .venv
 source .venv/bin/activate  # macOS/Linux
 # .venv\Scripts\activate  # Windows
+
+# 의존성 설치
 pip install -r requirements.txt
 ```
 
-### 2. 서버 실행
+### 테스트 데이터
+`data` 폴더 내 CSV 파일들이 자동으로 포함되어 있습니다:
+- `지역별_도소매별_가맹점수_현황.csv`
+- `지역별_서비스별_가맹점수_현황.csv`
+- `지역별_외식별_가맹점수_현황.csv`
+
+### API 서버 실행
 ```bash
 # 가상환경이 활성화되어 있는지 확인
 source .venv/bin/activate  # macOS/Linux
 # .venv\Scripts\activate  # Windows
 
-# 서버 실행
+# 기본 포트(5001)로 실행
 python app.py
+
+# 특정 포트로 실행
+python app.py --port 8080
+
+# 특정 호스트와 포트로 실행
+python app.py --host 0.0.0.0 --port 8000
+
+# 디버그 모드로 실행
+python app.py --debug
 
 # 또는 실행 스크립트 사용
 ./run_server.sh
+
+# 자동 설정 스크립트 실행 (권장)
+./setup_and_test.sh
 ```
 
 서버가 `http://localhost:5001`에서 실행됩니다.
 
-### 3. API 테스트
+### API 테스트
 ```bash
 # 가상환경이 활성화되어 있는지 확인
 source .venv/bin/activate  # macOS/Linux
