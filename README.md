@@ -1,4 +1,4 @@
-# 🚀 가맹점수 분석 차트 API 서버
+# 🚀 창업 리포트 차트 API 서버
 
 **FE에서 차트 사양을 가져올 수 있는 REST API를 제공합니다.**
 
@@ -10,9 +10,12 @@
 - [📊 제공하는 차트](#-제공하는-차트)
 - [🛠️ 지원하는 차트 라이브러리](#️-지원하는-차트-라이브러리)
 - [🚀 빠른 시작](#-빠른-시작)
+- [🐳 Docker 사용법](#-docker-사용법)
 - [📡 API 엔드포인트](#-api-엔드포인트)
 - [📚 API 문서](#-api-문서)
 - [🔧 사용 예시](#-사용-예시)
+- [🧪 테스트](#-테스트)
+- [✅ 코드 품질](#-코드-품질)
 - [🎨 프론트엔드 개발자 가이드](#-프론트엔드-개발자-가이드)
 - [🛠️ 개발 및 배포](#️-개발-및-배포)
 - [🔧 문제 해결](#-문제-해결)
@@ -25,6 +28,11 @@
 - 🔍 **완벽한 API 문서화**: Swagger UI + ReDoc 제공
 - 🚀 **RESTful API**: 표준 HTTP 메서드와 상태 코드 사용
 - 🌐 **CORS 지원**: 크로스 오리진 요청 허용
+- 🐳 **Docker 지원**: 프로덕션/개발 환경 컨테이너화
+- 🔄 **CI/CD 파이프라인**: GitHub Actions 자동화
+- ✅ **코드 품질 관리**: Black, isort, flake8, pre-commit hooks
+- 🧪 **테스트 커버리지**: pytest, 자동화된 API 테스트
+- 🔧 **핫 리로드**: 개발 환경에서 코드 변경 시 자동 재시작
 
 ## 📊 제공하는 차트
 
@@ -112,6 +120,93 @@ source .venv/bin/activate  # macOS/Linux
 python test_api_client.py
 ```
 
+## 🐳 Docker 사용법
+
+### Docker 이미지 빌드 및 실행
+
+#### 1. 기본 Docker 사용
+```bash
+# Docker 이미지 빌드
+./docker-build.sh build
+
+# Docker 컨테이너 실행
+./docker-build.sh run
+
+# Docker 컨테이너 중지
+./docker-build.sh stop
+
+# Docker 컨테이너 로그 확인
+./docker-build.sh logs
+
+# Docker 컨테이너 테스트
+./docker-build.sh test
+
+# Docker 정리
+./docker-build.sh clean
+```
+
+#### 2. Docker Compose 사용 (개발 환경)
+```bash
+# 개발 환경 시작 (핫 리로드)
+./docker-compose-dev.sh up
+
+# 개발 환경 중지
+./docker-compose-dev.sh down
+
+# 개발 환경 재시작
+./docker-compose-dev.sh restart
+
+# 로그 확인
+./docker-compose-dev.sh logs
+
+# API 테스트
+./docker-compose-dev.sh test
+
+# 상태 확인
+./docker-compose-dev.sh status
+```
+
+#### 3. 직접 Docker 명령어 사용
+```bash
+# 프로덕션 이미지 빌드
+docker build -t chart-api-server:latest .
+
+# 개발용 이미지 빌드
+docker build -t chart-api-server:dev -f Dockerfile.dev .
+
+# 프로덕션 컨테이너 실행
+docker run -d \
+  --name chart-api-server \
+  -p 5001:5001 \
+  -v "$(pwd)/data:/app/data:ro" \
+  -v "$(pwd)/chart_specs_json:/app/chart_specs_json:ro" \
+  chart-api-server:latest
+
+# 개발용 컨테이너 실행 (핫 리로드)
+docker run -d \
+  --name chart-api-server-dev \
+  -p 5002:5001 \
+  -v "$(pwd):/app" \
+  -v "$(pwd)/data:/app/data:ro" \
+  -v "$(pwd)/chart_specs_json:/app/chart_specs_json:ro" \
+  chart-api-server:dev
+```
+
+### Docker Compose 환경
+```bash
+# 모든 서비스 시작
+docker-compose up -d
+
+# 개발 환경만 시작
+docker-compose --profile dev up -d
+
+# 서비스 중지
+docker-compose down
+
+# 로그 확인
+docker-compose logs -f
+```
+
 ## 📡 API 엔드포인트
 
 ### 기본 정보
@@ -164,6 +259,81 @@ curl http://localhost:5001/api/data/?type=line
 curl http://localhost:5001/api/data/?type=bar
 ```
 
+## 🧪 테스트
+
+### 자동화된 테스트 실행
+```bash
+# 모든 테스트 실행
+pytest
+
+# 커버리지와 함께 테스트 실행
+pytest --cov=. --cov-report=html
+
+# 특정 테스트 파일 실행
+pytest tests/test_api.py -v
+
+# API 테스트만 실행
+python test_api_client.py
+```
+
+### Docker 환경에서 테스트
+```bash
+# 개발 환경에서 API 테스트
+./docker-compose-dev.sh test
+
+# 프로덕션 환경에서 API 테스트
+./docker-build.sh test
+```
+
+### 테스트 종류
+- **API 테스트**: 모든 엔드포인트의 정상 작동 확인
+- **차트 사양 테스트**: 각 차트 라이브러리별 사양 유효성 검증
+- **데이터 로드 테스트**: CSV 파일 로드 및 데이터 처리 확인
+- **헬스체크 테스트**: 서버 상태 및 의존성 확인
+
+## ✅ 코드 품질
+
+### 자동 포맷팅 및 검사
+```bash
+# 코드 포맷팅 (Black)
+black .
+
+# Import 정렬 (isort)
+isort . --profile=black
+
+# 코드 품질 검사 (flake8)
+flake8 . --max-line-length=88 --extend-ignore=E203
+
+# 모든 검사 한 번에 실행
+black . && isort . --profile=black && flake8 . --max-line-length=88 --extend-ignore=E203
+```
+
+### Pre-commit Hooks
+```bash
+# Pre-commit hooks 설치
+pre-commit install
+
+# 모든 파일에 대해 pre-commit 실행
+pre-commit run --all-files
+
+# 특정 hook만 실행
+pre-commit run black
+pre-commit run isort
+pre-commit run flake8
+```
+
+### VS Code 설정
+`.vscode/settings.json`에서 자동 포맷팅이 설정되어 있습니다:
+- **저장 시 자동 포맷팅**: Black 사용
+- **저장 시 import 정리**: isort 사용
+- **실시간 linting**: flake8 사용
+
+### 코드 품질 도구
+- **Black**: 일관된 코드 포맷팅
+- **isort**: import 문 자동 정렬
+- **flake8**: PEP8 준수 및 코드 품질 검사
+- **pre-commit**: Git commit 전 자동 검사
+
 ## 🛠️ 개발 및 배포
 
 ### 개발 모드
@@ -175,6 +345,9 @@ python app.py
 export FLASK_ENV=development
 export FLASK_DEBUG=1
 python app.py
+
+# Docker 개발 환경 사용 (권장)
+./docker-compose-dev.sh up
 ```
 
 ### 프로덕션 배포
@@ -186,18 +359,42 @@ gunicorn -w 4 -b 0.0.0.0:5001 app:app
 # 또는 uWSGI 사용
 pip install uwsgi
 uwsgi --http :5001 --wsgi-file app.py --callable app
+
+# Docker 프로덕션 환경 사용 (권장)
+./docker-build.sh build
+./docker-build.sh run
 ```
 
-### Docker 배포
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 5001
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5001", "app:app"]
-```
+### CI/CD 파이프라인
+이 프로젝트는 GitHub Actions를 사용한 완전 자동화된 CI/CD 파이프라인을 포함합니다:
+
+#### 🔄 자동화된 워크플로우
+1. **코드 품질 검사** (`code-quality`)
+   - Black 코드 포맷팅 검사
+   - isort import 정렬 검사
+   - flake8 코드 품질 검사
+
+2. **테스트 실행** (`test`)
+   - Python 3.11에서 모든 테스트 실행
+   - 커버리지 측정 및 리포트 생성
+   - Codecov 업로드
+
+3. **Docker 빌드 및 테스트** (`docker-build`)
+   - 프로덕션 Docker 이미지 빌드
+   - 개발용 Docker 이미지 빌드
+   - 각 이미지의 헬스체크 테스트
+
+4. **보안 스캔** (`security-scan`)
+   - 기본 보안 검사 실행
+   - 의존성 취약점 확인
+
+5. **배포 알림** (`deploy-notification`)
+   - 모든 단계 완료 시 성공 알림
+
+#### 🚀 트리거 조건
+- **Push**: `main`, `develop` 브랜치
+- **Pull Request**: `main`, `develop` 브랜치 대상
+- **자동 배포**: `main` 브랜치 푸시 시에만 실행
 
 ## 🎨 프론트엔드 개발자 가이드
 
@@ -282,6 +479,21 @@ ls -la data/
 chmod 644 data/*.csv
 ```
 
+#### 4. Docker 관련 문제
+```bash
+# Docker 컨테이너 상태 확인
+docker ps -a
+
+# Docker 로그 확인
+docker logs chart-api-server
+
+# Docker 컨테이너 재시작
+docker restart chart-api-server
+
+# Docker 이미지 재빌드
+./docker-build.sh build
+```
+
 ### 로그 확인
 ```bash
 # Flask 디버그 로그 활성화
@@ -290,6 +502,9 @@ python app.py
 
 # 또는 로그 파일로 출력
 python app.py > app.log 2>&1
+
+# Docker 로그 확인
+./docker-build.sh logs
 ```
 
 ## 🤝 기여하기
@@ -297,162 +512,68 @@ python app.py > app.log 2>&1
 ### 개발 환경 설정
 1. 이 저장소를 포크합니다
 2. 로컬에 클론합니다
-3. 가상환경을 설정하고 의존성을 설치합니다
+3. 개발 환경을 설정합니다:
+   ```bash
+   # 가상환경 생성 및 활성화
+   python -m venv .venv
+   source .venv/bin/activate  # macOS/Linux
+   
+   # 의존성 설치
+   pip install -r requirements.txt
+   
+   # Pre-commit hooks 설치
+   pre-commit install
+   ```
 4. 새로운 기능을 개발합니다
-5. 테스트를 작성하고 실행합니다
-6. Pull Request를 생성합니다
+5. 코드 품질 검사를 실행합니다:
+   ```bash
+   # 자동 포맷팅
+   black . && isort . --profile=black
+   
+   # 코드 품질 검사
+   flake8 . --max-line-length=88 --extend-ignore=E203
+   ```
+6. 테스트를 작성하고 실행합니다:
+   ```bash
+   pytest --cov=. --cov-report=html
+   ```
+7. Pull Request를 생성합니다
 
 ### 코드 스타일
-- Python: PEP 8 준수
-- 함수/클래스: docstring 포함
-- 변수명: 명확하고 설명적인 이름 사용
+- **Python**: PEP 8 준수 (Black으로 자동 포맷팅)
+- **Import**: isort를 사용한 자동 정렬
+- **함수/클래스**: docstring 포함 필수
+- **변수명**: 명확하고 설명적인 이름 사용
+- **라인 길이**: 88자 제한 (Black 기본값)
+- **Pre-commit**: 모든 커밋 전 자동 검사 실행
+
+### Docker 개발 환경
+```bash
+# 개발 환경 시작
+./docker-compose-dev.sh up
+
+# 코드 수정 후 자동 리로드 확인
+# 로그 확인
+./docker-compose-dev.sh logs
+
+# API 테스트
+./docker-compose-dev.sh test
+```
 
 ## 📄 라이선스
 
 이 프로젝트는 MIT 라이선스 하에 배포됩니다.
 
-### 특정 차트 타입만 가져오기
-```bash
-curl "http://localhost:5000/api/charts/echarts?type=line"
-curl "http://localhost:5000/api/charts/echarts?type=bar"
-```
+## 🚀 배포 체크리스트
 
-## 💻 FE에서 사용하기
-
-### JavaScript/TypeScript 예시
-
-```javascript
-// ECharts 라인 차트 사양 가져오기
-async function getEChartsLineChart() {
-    try {
-        const response = await fetch('http://localhost:5000/api/charts/echarts/line');
-        const chartOption = await response.json();
-        
-        // ECharts로 차트 렌더링
-        const chart = echarts.init(document.getElementById('chart'));
-        chart.setOption(chartOption);
-    } catch (error) {
-        console.error('차트 사양 가져오기 실패:', error);
-    }
-}
-
-// 모든 차트 사양 가져오기
-async function getAllCharts() {
-    try {
-        const response = await fetch('http://localhost:5000/api/charts');
-        const allCharts = await response.json();
-        
-        console.log('사용 가능한 차트:', allCharts);
-        
-        // 원하는 차트 라이브러리 선택
-        const echartsOption = allCharts.echarts.line_chart;
-        const plotlyOption = allCharts.plotly.bar_chart;
-        
-    } catch (error) {
-        console.error('차트 사양 가져오기 실패:', error);
-    }
-}
-```
-
-### Python 예시
-
-```python
-import requests
-
-# ECharts 라인 차트 사양 가져오기
-response = requests.get('http://localhost:5000/api/charts/echarts/line')
-if response.status_code == 200:
-    chart_option = response.json()
-    print("차트 사양:", chart_option)
-else:
-    print("API 호출 실패:", response.status_code)
-```
-
-## 📁 파일 구조
-
-```
-08_chart_api_server/
-├── app.py                    # Flask API 서버 (Swagger/ReDoc 포함)
-├── chart_specs.py           # 차트 사양 정의 (CSV 데이터 로드)
-├── test_chart_specs.py      # 차트 사양 테스트
-├── test_api_client.py       # API 테스트 클라이언트
-├── requirements.txt          # Python 의존성
-├── data/                    # CSV 데이터 파일
-│   ├── 지역별_도소매별_가맹점수_현황.csv
-│   ├── 지역별_서비스별_가맹점수_현황.csv
-│   └── 지역별_외식별_가맹점수_현황.csv
-└── README.md                # 이 파일
-```
-
-## 📊 데이터 소스
-
-- **데이터 형식**: CSV 파일
-- **데이터 위치**: `data/` 폴더
-- **데이터 내용**: 2017년~2024년 업종별 가맹점수 현황
-- **동적 로드**: CSV 파일에서 실시간으로 데이터 로드
-
-## 🔍 API 응답 예시
-
-### ECharts 라인 차트 응답
-```json
-{
-  "title": {
-    "text": "연도별 업종별 총 가맹점수 추이",
-    "left": "center",
-    "textStyle": {"fontSize": 16, "fontWeight": "bold"}
-  },
-  "xAxis": {
-    "type": "category",
-    "data": [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
-    "name": "연도"
-  },
-  "yAxis": {
-    "type": "value",
-    "name": "총 가맹점수"
-  },
-  "series": [
-    {
-      "name": "도소매",
-      "type": "line",
-      "data": [48324, 54194, 55581, 56897, 60874, 63470, 59843, 69293]
-    }
-  ]
-}
-```
-
-## 🎯 장점
-
-1. **일관성**: BE/AI에서 차트 디자인과 데이터를 고정
-2. **유연성**: FE에서 원하는 차트 라이브러리 선택 가능
-3. **재사용성**: 동일한 데이터로 여러 차트 라이브러리 지원
-4. **유지보수성**: 차트 사양 변경 시 API만 수정하면 됨
-
-## 🚨 주의사항
-
-1. **CORS**: 개발 환경에서만 모든 도메인 허용 (프로덕션에서는 제한 필요)
-2. **에러 처리**: FE에서 API 호출 실패 시 적절한 에러 처리 필요
-3. **캐싱**: 자주 변경되지 않는 차트 사양은 FE에서 캐싱 고려
-
-## 🤝 협업 가이드
-
-### BE/AI 개발자
-- 차트 사양 생성 및 유지보수
-- API 서버 운영
-- 데이터 업데이트
-
-### FE 개발자
-- API 호출 및 차트 렌더링
-- 사용자 인터랙션 추가
-- 차트 라이브러리 선택
-
-## 📞 지원
-
-API 사용 중 문제가 발생하면 다음을 확인하세요:
-
-1. 서버가 실행 중인지 확인 (`/health` 엔드포인트)
-2. API 엔드포인트 URL이 올바른지 확인
-3. 요청/응답 형식이 올바른지 확인
+### Docker 배포
+- [ ] Docker 이미지 빌드 성공
+- [ ] 컨테이너 실행 및 헬스체크 통과
+- [ ] API 엔드포인트 정상 작동
+- [ ] 로그 확인 및 모니터링
 
 ---
 
 **이 API를 통해 BE/AI에서 차트 디자인과 데이터를 고정하고, FE는 바인딩만 하면 되므로 일관된 차트를 빠르게 구현할 수 있습니다!** 🎉
+
+**Docker를 통해 간단하고 안정적인 배포가 가능합니다!** 🐳

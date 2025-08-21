@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  chart-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chart-api-server
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - PORT=5001
+    volumes:
+      - ./data:/app/data:ro
+      - ./chart_specs_json:/app/chart_specs_json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5001/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - chart-network
+
+  # 개발용 서비스 (핫 리로드)
+  chart-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: chart-api-server-dev
+    ports:
+      - "5002:5001"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - PORT=5001
+    volumes:
+      - .:/app
+      - ./data:/app/data:ro
+      - ./chart_specs_json:/app/chart_specs_json:ro
+    restart: unless-stopped
+    profiles:
+      - dev
+    networks:
+      - chart-network
+
+networks:
+  chart-network:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local

@@ -1,0 +1,40 @@
+# 개발용 Dockerfile
+FROM python:3.11-slim
+
+# 메타데이터 설정
+LABEL maintainer="LEEYH205"
+LABEL description="창업 리포트 차트 API 서버 (개발용)"
+LABEL version="1.0.0-dev"
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# 시스템 패키지 업데이트 및 필요한 패키지 설치
+RUN apt-get update && apt-get install -y \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python 의존성 파일 복사 및 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 개발용 추가 패키지 설치
+RUN pip install --no-cache-dir \
+    pytest \
+    pytest-cov \
+    black \
+    flake8 \
+    mypy
+
+# 포트 노출
+EXPOSE 5001
+
+# 환경변수 설정
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=development
+ENV FLASK_DEBUG=1
+ENV PORT=5001
+
+# 개발 서버 실행 (핫 리로드)
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001", "--reload"]
