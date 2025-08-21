@@ -349,7 +349,9 @@ def get_plotly_line_chart_figure():
                 "name": "도소매",
                 "marker": {"symbol": "circle", "size": 8},
                 "line": {"width": 3},
-                "hovertemplate": "<b>도소매</b><br>연도: %{x}년<br>가맹점수: %{y:,}개<extra></extra>",
+                "hovertemplate": (
+                    "<b>도소매</b><br>연도: %{x}년<br>가맹점수: %{y:,}개<extra></extra>"
+                ),
             },
             {
                 "x": [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
@@ -359,7 +361,9 @@ def get_plotly_line_chart_figure():
                 "name": "서비스",
                 "marker": {"symbol": "square", "size": 8},
                 "line": {"width": 3},
-                "hovertemplate": "<b>서비스</b><br>연도: %{x}년<br>가맹점수: %{y:,}개<extra></extra>",
+                "hovertemplate": (
+                    "<b>서비스</b><br>연도: %{x}년<br>가맹점수: %{y:,}개<extra></extra>"
+                ),
             },
             {
                 "x": [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
@@ -369,7 +373,9 @@ def get_plotly_line_chart_figure():
                 "name": "외식",
                 "marker": {"symbol": "triangle-up", "size": 8},
                 "line": {"width": 3},
-                "hovertemplate": "<b>외식</b><br>연도: %{x}년<br>가맹점수: %{y:,}개<extra></extra>",
+                "hovertemplate": (
+                    "<b>외식</b><br>연도: %{x}년<br>가맹점수: %{y:,}개<extra></extra>"
+                ),
             },
         ],
         "layout": {

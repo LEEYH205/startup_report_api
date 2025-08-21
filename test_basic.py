@@ -18,7 +18,7 @@ class TestBasic(unittest.TestCase):
     def test_imports(self):
         """필요한 모듈들이 정상적으로 import 되는지 테스트"""
         try:
-            import app
+            import app  # noqa: F401
 
             self.assertTrue(True, "app 모듈 import 성공")
         except ImportError as e:
@@ -44,9 +44,7 @@ class TestBasic(unittest.TestCase):
         ]
 
         for file_path in required_files:
-            self.assertTrue(
-                os.path.exists(file_path), f"데이터 파일이 존재하지 않음: {file_path}"
-            )
+            self.assertTrue(os.path.exists(file_path), f"데이터 파일이 존재하지 않음: {file_path}")
 
 
 if __name__ == "__main__":

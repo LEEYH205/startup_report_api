@@ -133,13 +133,9 @@ def test_chart_spec_validation():
                 print(f"      - Y축: {data['xAxis']['name']}")
                 print(f"      - 시리즈: {len(data['series'])} 개")
             else:
-                print(
-                    f"   ❌ ECharts 라인 차트 사양 검증 실패: 누락된 필드 {missing_fields}"
-                )
+                print(f"   ❌ ECharts 라인 차트 사양 검증 실패: 누락된 필드 {missing_fields}")
         else:
-            print(
-                f"   ❌ ECharts 라인 차트 사양 가져오기 실패: HTTP {response.status_code}"
-            )
+            print(f"   ❌ ECharts 라인 차트 사양 가져오기 실패: HTTP {response.status_code}")
 
     except Exception as e:
         print(f"   ❌ 차트 사양 검증 오류: {e}")

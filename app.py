@@ -277,7 +277,8 @@ def redoc():
 </head>
 <body>
     <redoc spec-url="/swagger.json"></redoc>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@2.0.0/bundles/redoc.standalone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@2.0.0/bundles/redoc.standalone.js">
+    </script>
 </body>
 </html>
 """
@@ -287,12 +288,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="가맹점수 분석 차트 API 서버")
-    parser.add_argument(
-        "--host", default="0.0.0.0", help="호스트 주소 (기본값: 0.0.0.0)"
-    )
-    parser.add_argument(
-        "--port", type=int, default=5001, help="포트 번호 (기본값: 5001)"
-    )
+    parser.add_argument("--host", default="0.0.0.0", help="호스트 주소 (기본값: 0.0.0.0)")
+    parser.add_argument("--port", type=int, default=5001, help="포트 번호 (기본값: 5001)")
     parser.add_argument("--debug", action="store_true", help="디버그 모드 활성화")
 
     args = parser.parse_args()
