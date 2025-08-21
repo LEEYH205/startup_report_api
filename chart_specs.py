@@ -420,9 +420,7 @@ def get_plotly_bar_chart_figure():
                 "y": [11565, 11078, 19369],
                 "type": "bar",
                 "marker": {"color": ["#87ceeb", "#90ee90", "#fa8072"], "opacity": 0.8},
-                "hovertemplate": (
-                    "<b>%{x}</b><br>평균 가맹점수: %{y:,}개<extra></extra>"
-                ),
+                "hovertemplate": ("<b>%{x}</b><br>평균 가맹점수: %{y:,}개<extra></extra>"),
                 "text": ["11,565개", "11,078개", "19,369개"],
                 "textposition": "outside",
             }
