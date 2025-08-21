@@ -7,7 +7,6 @@ Flask 애플리케이션의 엔드포인트들을 테스트
 import json
 import os
 import sys
-import tempfile
 import unittest
 
 # 프로젝트 루트를 Python 경로에 추가
