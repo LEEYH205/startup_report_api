@@ -44,7 +44,9 @@ class TestBasic(unittest.TestCase):
         ]
 
         for file_path in required_files:
-            self.assertTrue(os.path.exists(file_path), f"데이터 파일이 존재하지 않음: {file_path}")
+            self.assertTrue(
+                os.path.exists(file_path), f"데이터 파일이 존재하지 않음: {file_path}"
+            )
 
 
 if __name__ == "__main__":

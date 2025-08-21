@@ -83,7 +83,9 @@ def export_chart_specs_to_json():
     with open(f"{output_dir}/bar_chart_data.json", "w", encoding="utf-8") as f:
         json.dump(BAR_CHART_DATA, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ 모든 차트 사양이 '{output_dir}' 디렉토리에 JSON 파일로 저장되었습니다!")
+    print(
+        f"\n✅ 모든 차트 사양이 '{output_dir}' 디렉토리에 JSON 파일로 저장되었습니다!"
+    )
 
     # 생성된 파일 목록 출력
     print("\n📁 생성된 파일 목록:")
@@ -119,7 +121,9 @@ def test_chart_specs():
         print("3. Plotly figure 테스트...")
         plotly_line = get_plotly_line_chart_figure()
         plotly_bar = get_plotly_bar_chart_figure()
-        assert plotly_line["layout"]["title"]["text"] == "연도별 업종별 총 가맹점수 추이"
+        assert (
+            plotly_line["layout"]["title"]["text"] == "연도별 업종별 총 가맹점수 추이"
+        )
         assert plotly_bar["layout"]["title"]["text"] == "업종별 전체 기간 평균 가맹점수"
         print("   ✅ Plotly figure 생성 성공")
 
@@ -128,9 +132,13 @@ def test_chart_specs():
         chartjs_line = get_chartjs_line_chart_config()
         chartjs_bar = get_chartjs_bar_chart_config()
         assert (
-            chartjs_line["options"]["plugins"]["title"]["text"] == "연도별 업종별 총 가맹점수 추이"
+            chartjs_line["options"]["plugins"]["title"]["text"]
+            == "연도별 업종별 총 가맹점수 추이"
         )
-        assert chartjs_bar["options"]["plugins"]["title"]["text"] == "업종별 전체 기간 평균 가맹점수"
+        assert (
+            chartjs_bar["options"]["plugins"]["title"]["text"]
+            == "업종별 전체 기간 평균 가맹점수"
+        )
         print("   ✅ Chart.js 설정 생성 성공")
 
         print("\n🎉 모든 차트 사양 테스트 통과!")
@@ -153,7 +161,8 @@ def create_html_example():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>가맹점수 분석 차트 예시</title>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js">
+    </script>
     <style>
         body {
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -259,7 +268,9 @@ def create_html_example():
                 {
                     "name": "외식",
                     "type": "line",
-                    "data": [101737, 111586, 117368, 125550, 131085, 157192, 156638, 175768],
+                    "data": [
+                        101737, 111586, 117368, 125550, 131085, 157192, 156638, 175768
+                    ],
                     "symbol": "triangle",
                     "symbolSize": 6,
                     "lineStyle": {"width": 2},
