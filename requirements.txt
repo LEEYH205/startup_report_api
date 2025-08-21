@@ -14,3 +14,4 @@ pre-commit==3.7.0
 # 테스트 도구
 pytest==8.4.1
 pytest-cov==6.2.1
+requests==2.31.0
