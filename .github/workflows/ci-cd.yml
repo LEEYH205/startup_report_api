@@ -94,7 +94,13 @@ jobs:
     - name: Test production Docker image
       run: |
         docker run -d --name test-prod -p 5001:5001 chart-api-server:latest
-        sleep 15
+        echo "Waiting for production container to start..."
+        sleep 30
+        echo "Checking container status..."
+        docker ps
+        echo "Container logs:"
+        docker logs test-prod
+        echo "Testing health endpoint..."
         curl -f http://localhost:5001/health || exit 1
         docker stop test-prod
         docker rm test-prod
@@ -103,7 +109,13 @@ jobs:
     - name: Test development Docker image
       run: |
         docker run -d --name test-dev -p 5002:5001 chart-api-server:dev
-        sleep 15
+        echo "Waiting for development container to start..."
+        sleep 30
+        echo "Checking container status..."
+        docker ps
+        echo "Container logs:"
+        docker logs test-dev
+        echo "Testing health endpoint..."
         curl -f http://localhost:5002/health || exit 1
         docker stop test-dev
         docker rm test-dev
