@@ -77,11 +77,30 @@ source .venv/bin/activate  # macOS/Linux
 pip install -r requirements.txt
 ```
 
-### 테스트 데이터
-`data` 폴더 내 CSV 파일들이 자동으로 포함되어 있습니다:
+### 데이터 설정
+
+#### 🗂️ **팀 공유 데이터**
+프로젝트에 필요한 데이터 파일들이 Google Drive에 저장되어 있습니다.
+
+**📥 데이터 다운로드:**
+1. [팀 공유 Google Drive 폴더](https://drive.google.com/drive/folders/1exJ1ppaVf-_7vsRTqNgsBdB5PB4THjoW?usp=sharing)에 접속
+2. 모든 CSV 파일을 다운로드
+3. 프로젝트 루트에 `data/` 폴더 생성
+4. 다운로드한 파일들을 `data/` 폴더에 복사
+
+**📁 필요한 파일들:**
 - `지역별_도소매별_가맹점수_현황.csv`
 - `지역별_서비스별_가맹점수_현황.csv`
 - `지역별_외식별_가맹점수_현황.csv`
+
+```bash
+# 파일 구조 확인
+ls data/
+# 출력되어야 할 파일들:
+# 지역별_도소매별_가맹점수_현황.csv
+# 지역별_서비스별_가맹점수_현황.csv
+# 지역별_외식별_가맹점수_현황.csv
+```
 
 ### API 서버 실행
 ```bash

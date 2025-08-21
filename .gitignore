@@ -79,3 +79,7 @@ api_chart_specs/
 
 # 로그 파일
 *.log
+
+# 데이터 파일 (팀 공유 Google Drive에서 다운로드)
+data/
+/data
