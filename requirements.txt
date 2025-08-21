@@ -6,10 +6,10 @@ pandas==2.0.3
 numpy<2.0
 
 # 개발 도구
-black==25.1.0
-isort==5.13.2
-flake8==7.3.0
-pre-commit==3.7.0
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+pre-commit==3.5.0
 
 # 테스트 도구
 pytest==8.4.1
