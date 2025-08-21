@@ -267,7 +267,7 @@ def redoc():
     <title>가맹점수 분석 차트 API - ReDoc</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link 
+    <link
         href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700"
         rel="stylesheet">
     <style>
