@@ -996,17 +996,13 @@ def get_chartjs_area_population_config():
             "plugins": {
                 "title": {
                     "display": True,
-                    "text": (
-                        "포천시 읍면동별 총 유동인구 (2024)"
-                    ),
+                    "text": "포천시 읍면동별 총 유동인구 (2024)",
                     "font": {"size": 16, "weight": "bold"},
                 },
                 "legend": {"display": False},
                 "tooltip": {
                     "callbacks": {
-                        "label": (
-                        "function(context) { return context.parsed.y.toLocaleString() + '명'; }"
-                    )
+                        "label": "function(context) { return context.parsed.y.toLocaleString() + '명'; }"
                     }
                 },
             },
@@ -1060,9 +1056,7 @@ def get_chartjs_age_gender_config():
             "plugins": {
                 "title": {
                     "display": True,
-                    "text": (
-                        "연령대별 성별 유동인구 (2024)"
-                    ),
+                    "text": "연령대별 성별 유동인구 (2024)",
                     "font": {"size": 16, "weight": "bold"},
                 },
                 "legend": {
@@ -1074,9 +1068,9 @@ def get_chartjs_age_gender_config():
                     "intersect": False,
                     "callbacks": {
                         "label": (
-                        "function(context) { return context.dataset.label + ': ' + "
-                        "context.parsed.y.toLocaleString() + '명'; }"
-                    )
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toLocaleString() + '명'; }"
+                        )
                     },
                 },
             },
