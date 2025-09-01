@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,22 +12,26 @@
             margin: 20px;
             background-color: #f5f5f5;
         }
+
         .chart-container {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
             padding: 20px;
         }
+
         .chart {
             width: 100%;
             height: 500px;
         }
+
         h1 {
             color: #333;
             text-align: center;
             margin-bottom: 30px;
         }
+
         .description {
             color: #666;
             text-align: center;
@@ -34,31 +39,50 @@
         }
     </style>
 </head>
+
 <body>
     <h1>🏪 가맹점수 분석 대시보드</h1>
     <p class="description">2017년~2024년 업종별 가맹점수 변화 추이 및 평균 비교</p>
-    
+
     <div class="chart-container">
         <h2>📈 연도별 업종별 총 가맹점수 추이</h2>
         <div id="lineChart" class="chart"></div>
     </div>
-    
+
     <div class="chart-container">
         <h2>📊 업종별 전체 기간 평균 가맹점수</h2>
         <div id="barChart" class="chart"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>🥧 성별 유동인구 비율 (2024)</h2>
+        <div id="pieChart" class="chart"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>🏘️ 포천시 읍면동별 총 유동인구 (2024)</h2>
+        <div id="areaChart" class="chart"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>👥 연령대별 성별 유동인구 (2024)</h2>
+        <div id="ageGenderChart" class="chart"></div>
     </div>
 
     <script>
         // 차트 초기화
         const lineChart = echarts.init(document.getElementById('lineChart'));
         const barChart = echarts.init(document.getElementById('barChart'));
-        
+        const pieChart = echarts.init(document.getElementById('pieChart'));
+        const areaChart = echarts.init(document.getElementById('areaChart'));
+        const ageGenderChart = echarts.init(document.getElementById('ageGenderChart'));
+
         // 라인 차트 옵션
         const lineOption = {
             "title": {
                 "text": "연도별 업종별 총 가맹점수 추이",
                 "left": "center",
-                "textStyle": {"fontSize": 16, "fontWeight": "bold"}
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
             },
             "tooltip": {
                 "trigger": "axis",
@@ -95,8 +119,8 @@
                     "data": [48324, 54194, 55581, 56897, 60874, 63470, 59843, 69293],
                     "symbol": "circle",
                     "symbolSize": 6,
-                    "lineStyle": {"width": 2},
-                    "itemStyle": {"color": "#1f77b4"}
+                    "lineStyle": { "width": 2 },
+                    "itemStyle": { "color": "#1f77b4" }
                 },
                 {
                     "name": "서비스",
@@ -104,8 +128,8 @@
                     "data": [65164, 69518, 69948, 68071, 75102, 93298, 87107, 113790],
                     "symbol": "rect",
                     "symbolSize": 6,
-                    "lineStyle": {"width": 2},
-                    "itemStyle": {"color": "#ff7f0e"}
+                    "lineStyle": { "width": 2 },
+                    "itemStyle": { "color": "#ff7f0e" }
                 },
                 {
                     "name": "외식",
@@ -113,18 +137,18 @@
                     "data": [101737, 111586, 117368, 125550, 131085, 157192, 156638, 175768],
                     "symbol": "triangle",
                     "symbolSize": 6,
-                    "lineStyle": {"width": 2},
-                    "itemStyle": {"color": "#2ca02c"}
+                    "lineStyle": { "width": 2 },
+                    "itemStyle": { "color": "#2ca02c" }
                 }
             ]
         };
-        
+
         // 바 차트 옵션
         const barOption = {
             "title": {
                 "text": "업종별 전체 기간 평균 가맹점수",
                 "left": "center",
-                "textStyle": {"fontSize": 16, "fontWeight": "bold"}
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
             },
             "tooltip": {
                 "trigger": "axis",
@@ -154,9 +178,9 @@
                     "name": "평균 가맹점수",
                     "type": "bar",
                     "data": [
-                        {"value": 11565, "itemStyle": {"color": "#87ceeb"}},
-                        {"value": 11078, "itemStyle": {"color": "#90ee90"}},
-                        {"value": 19369, "itemStyle": {"color": "#fa8072"}}
+                        { "value": 11565, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 11078, "itemStyle": { "color": "#90ee90" } },
+                        { "value": 19369, "itemStyle": { "color": "#fa8072" } }
                     ],
                     "barWidth": "60%",
                     "label": {
@@ -167,16 +191,251 @@
                 }
             ]
         };
-        
+
+        // 파이 차트 옵션
+        const pieOption = {
+            "title": {
+                "text": "성별 유동인구 비율 (2024)",
+                "left": "center",
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
+            },
+            "tooltip": {
+                "trigger": "item",
+                "formatter": "{a} <br/>{b}: {c}명 ({d}%)"
+            },
+            "legend": {
+                "orient": "horizontal",
+                "bottom": "5%",
+                "left": "center",
+                "textStyle": { "fontSize": 12 }
+            },
+            "series": [
+                {
+                    "name": "유동인구",
+                    "type": "pie",
+                    "radius": ["40%", "70%"],
+                    "center": ["50%", "50%"],
+                    "data": [
+                        {
+                            "name": "남성",
+                            "value": 200766852,
+                            "itemStyle": { "color": "#87ceeb" }
+                        },
+                        {
+                            "name": "여성",
+                            "value": 144861837,
+                            "itemStyle": { "color": "#ffb6c1" }
+                        }
+                    ],
+                    "emphasis": {
+                        "itemStyle": {
+                            "shadowBlur": 10,
+                            "shadowOffsetX": 0,
+                            "shadowColor": "rgba(0, 0, 0, 0.5)"
+                        }
+                    },
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "fontSize": 12,
+                        "fontWeight": "bold",
+                        "formatter": "{b}\n{d}%"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                }
+            ]
+        };
+
+        // 읍면동별 유동인구 차트 옵션
+        const areaOption = {
+            "title": {
+                "text": "포천시 읍면동별 총 유동인구 (2024)",
+                "left": "center",
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "formatter": "{b}: {c}명"
+            },
+            "grid": {
+                "left": "3%",
+                "right": "4%",
+                "bottom": "15%",
+                "containLabel": true
+            },
+            "xAxis": {
+                "type": "category",
+                "data": ["소흘읍", "포천동", "선단동", "신북면", "가산면", "군내면", "영북면", "일동면", "이동면", "내촌면", "영중면", "관인면", "화현면", "창수면"],
+                "name": "읍면동",
+                "nameLocation": "middle",
+                "nameGap": 30,
+                "axisLabel": {
+                    "rotate": 45,
+                    "fontSize": 10
+                }
+            },
+            "yAxis": {
+                "type": "value",
+                "name": "총 유동인구 (명)",
+                "nameLocation": "middle",
+                "nameGap": 50,
+                "axisLabel": {
+                    "formatter": function (value) {
+                        return (value / 1000000).toFixed(1) + 'M';
+                    }
+                }
+            },
+            "series": [
+                {
+                    "name": "총 유동인구",
+                    "type": "bar",
+                    "data": [
+                        { "value": 102260649, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 35902500, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 33522744, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 28724232, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 23335189, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 23258512, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 21199597, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 19391904, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 15215484, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 11660110, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 11651256, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 7285466, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 7094244, "itemStyle": { "color": "#87ceeb" } },
+                        { "value": 5126801, "itemStyle": { "color": "#87ceeb" } }
+                    ],
+                    "barWidth": "60%",
+                    "label": {
+                        "show": true,
+                        "position": "top",
+                        "formatter": function (params) {
+                            return (params.value / 1000000).toFixed(1) + 'M';
+                        },
+                        "fontSize": 10
+                    }
+                }
+            ]
+        };
+
+        // 연령대별 성별 유동인구 차트 옵션
+        const ageGenderOption = {
+            "title": {
+                "text": "연령대별 성별 유동인구 (2024)",
+                "left": "center",
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "axisPointer": { "type": "shadow" },
+                "formatter": function (params) {
+                    let result = params[0].axisValue + '<br/>';
+                    params.forEach(param => {
+                        result += param.marker + param.seriesName + ': ' + (param.value / 1000000).toFixed(1) + 'M명<br/>';
+                    });
+                    return result;
+                }
+            },
+            "legend": {
+                "data": ["남성", "여성"],
+                "top": 30
+            },
+            "grid": {
+                "left": "3%",
+                "right": "4%",
+                "bottom": "15%",
+                "containLabel": true
+            },
+            "xAxis": {
+                "type": "category",
+                "data": ["10대", "15대", "20대", "25대", "30대", "35대", "40대", "45대", "50대", "55대", "60대", "65대", "70대+"],
+                "name": "연령대",
+                "nameLocation": "middle",
+                "nameGap": 30,
+                "axisLabel": {
+                    "rotate": 45,
+                    "fontSize": 10
+                }
+            },
+            "yAxis": {
+                "type": "value",
+                "name": "유동인구 (명)",
+                "nameLocation": "middle",
+                "nameGap": 50,
+                "axisLabel": {
+                    "formatter": function (value) {
+                        return (value / 1000000).toFixed(1) + 'M';
+                    }
+                }
+            },
+            "series": [
+                {
+                    "name": "남성",
+                    "type": "bar",
+                    "data": [
+                        { "value": 5830177, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 7493635, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 12972730, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 15846025, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 15313281, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 12225977, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 15217041, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 16362816, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 22166662, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 24991200, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 25178248, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 18626080, "itemStyle": { "color": "#1f77b4" } },
+                        { "value": 8492979, "itemStyle": { "color": "#1f77b4" } }
+                    ],
+                    "barWidth": "40%",
+                    "label": {
+                        "show": false
+                    }
+                },
+                {
+                    "name": "여성",
+                    "type": "bar",
+                    "data": [
+                        { "value": 5739710, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 6161940, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 9089491, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 10357401, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 9735658, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 8889869, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 10955883, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 12117343, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 16100652, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 17742588, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 17405796, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 13645395, "itemStyle": { "color": "#ffb6c1" } },
+                        { "value": 6920111, "itemStyle": { "color": "#ffb6c1" } }
+                    ],
+                    "barWidth": "40%",
+                    "label": {
+                        "show": false
+                    }
+                }
+            ]
+        };
+
         // 차트 렌더링
         lineChart.setOption(lineOption);
         barChart.setOption(barOption);
-        
+        pieChart.setOption(pieOption);
+        areaChart.setOption(areaOption);
+        ageGenderChart.setOption(ageGenderOption);
+
         // 반응형 처리
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             lineChart.resize();
             barChart.resize();
+            pieChart.resize();
+            areaChart.resize();
+            ageGenderChart.resize();
         });
     </script>
 </body>
+
 </html>

@@ -57,6 +57,214 @@ def load_chart_data():
         return get_hardcoded_data()
 
 
+def load_gender_population_data():
+    """유동인구 성별 데이터를 로드합니다."""
+
+    population_file = "data/pocheon_population_etl_2024_fixed.csv"
+
+    if not os.path.exists(population_file):
+        print("⚠️ 유동인구 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_gender_data()
+
+    try:
+        # CSV 파일 로드
+        df = pd.read_csv(population_file)
+
+        # 성별 컬럼 확인
+        male_cols = [
+            col for col in df.columns if col.startswith("M_") and col.endswith("_CNT")
+        ]
+        female_cols = [
+            col for col in df.columns if col.startswith("F_") and col.endswith("_CNT")
+        ]
+
+        # 성별 총 인구 계산
+        total_male = df[male_cols].sum().sum()
+        total_female = df[female_cols].sum().sum()
+
+        gender_data = {"남성": int(total_male), "여성": int(total_female)}
+
+        print("✅ 유동인구 성별 데이터를 성공적으로 로드했습니다.")
+        return gender_data
+
+    except Exception as e:
+        print(f"⚠️ 유동인구 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_gender_data()
+
+
+def load_area_population_data():
+    """읍면동별 총 유동인구 데이터를 로드합니다."""
+
+    population_file = "data/pocheon_population_etl_2024_fixed.csv"
+
+    if not os.path.exists(population_file):
+        print("⚠️ 유동인구 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_area_data()
+
+    try:
+        # CSV 파일 로드
+        df = pd.read_csv(population_file)
+
+        # 연령대/성별 컬럼 분리
+        age_gender_cols = [
+            col
+            for col in df.columns
+            if any(x in col for x in ["M_", "F_"]) and "CNT" in col
+        ]
+
+        # 읍면동별 총 인구 계산
+        area_population = (
+            df.groupby("ADMI_NM")[age_gender_cols]
+            .sum()
+            .sum(axis=1)
+            .sort_values(ascending=False)
+        )
+
+        area_data = area_population.to_dict()
+
+        print("✅ 읍면동별 유동인구 데이터를 성공적으로 로드했습니다.")
+        return area_data
+
+    except Exception as e:
+        print(f"⚠️ 읍면동별 유동인구 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_area_data()
+
+
+def load_age_gender_population_data():
+    """연령대별 성별 유동인구 데이터를 로드합니다."""
+
+    population_file = "data/pocheon_population_etl_2024_fixed.csv"
+
+    if not os.path.exists(population_file):
+        print("⚠️ 유동인구 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_age_gender_data()
+
+    try:
+        # CSV 파일 로드
+        df = pd.read_csv(population_file)
+
+        # 연령대/성별 컬럼 분리
+        age_gender_cols = [
+            col
+            for col in df.columns
+            if any(x in col for x in ["M_", "F_"]) and "CNT" in col
+        ]
+
+        # 남성 연령대별
+        male_cols = [col for col in age_gender_cols if col.startswith("M_")]
+        male_age_data = df[male_cols].sum()
+
+        # 여성 연령대별
+        female_cols = [col for col in age_gender_cols if col.startswith("F_")]
+        female_age_data = df[female_cols].sum()
+
+        # 연령대 라벨 매핑
+        age_labels = {
+            "M_10_CNT": "10대",
+            "M_15_CNT": "15대",
+            "M_20_CNT": "20대",
+            "M_25_CNT": "25대",
+            "M_30_CNT": "30대",
+            "M_35_CNT": "35대",
+            "M_40_CNT": "40대",
+            "M_45_CNT": "45대",
+            "M_50_CNT": "50대",
+            "M_55_CNT": "55대",
+            "M_60_CNT": "60대",
+            "M_65_CNT": "65대",
+            "M_70_CNT": "70대+",
+            "F_10_CNT": "10대",
+            "F_15_CNT": "15대",
+            "F_20_CNT": "20대",
+            "F_25_CNT": "25대",
+            "F_30_CNT": "30대",
+            "F_35_CNT": "35대",
+            "F_40_CNT": "40대",
+            "F_45_CNT": "45대",
+            "F_50_CNT": "50대",
+            "F_55_CNT": "55대",
+            "F_60_CNT": "60대",
+            "F_65_CNT": "65대",
+            "F_70_CNT": "70대+",
+        }
+
+        male_age_data_labeled = male_age_data.rename(index=age_labels)
+        female_age_data_labeled = female_age_data.rename(index=age_labels)
+
+        age_gender_data = {
+            "남성": male_age_data_labeled.to_dict(),
+            "여성": female_age_data_labeled.to_dict(),
+        }
+
+        print("✅ 연령대별 성별 유동인구 데이터를 성공적으로 로드했습니다.")
+        return age_gender_data
+
+    except Exception as e:
+        print(f"⚠️ 연령대별 성별 유동인구 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_age_gender_data()
+
+
+def get_hardcoded_gender_data():
+    """하드코딩된 성별 유동인구 데이터를 반환합니다."""
+    return {"남성": 200766852, "여성": 144861837}  # 58.1%  # 41.9%
+
+
+def get_hardcoded_area_data():
+    """하드코딩된 읍면동별 유동인구 데이터를 반환합니다."""
+    return {
+        "소흘읍": 102260649,
+        "포천동": 35902500,
+        "선단동": 33522744,
+        "신북면": 28724232,
+        "가산면": 23335189,
+        "군내면": 23258512,
+        "영북면": 21199597,
+        "일동면": 19391904,
+        "이동면": 15215484,
+        "내촌면": 11660110,
+        "영중면": 11651256,
+        "관인면": 7285466,
+        "화현면": 7094244,
+        "창수면": 5126801,
+    }
+
+
+def get_hardcoded_age_gender_data():
+    """하드코딩된 연령대별 성별 유동인구 데이터를 반환합니다."""
+    return {
+        "남성": {
+            "10대": 5830177,
+            "15대": 7493635,
+            "20대": 12972730,
+            "25대": 15846025,
+            "30대": 15313281,
+            "35대": 12225977,
+            "40대": 15217041,
+            "45대": 16362816,
+            "50대": 22166662,
+            "55대": 24991200,
+            "60대": 25178248,
+            "65대": 18626080,
+            "70대+": 8492979,
+        },
+        "여성": {
+            "10대": 5739710,
+            "15대": 6161940,
+            "20대": 9089491,
+            "25대": 10357401,
+            "30대": 9735658,
+            "35대": 8889869,
+            "40대": 10955883,
+            "45대": 12117343,
+            "50대": 16100652,
+            "55대": 17742588,
+            "60대": 17405796,
+            "65대": 13645395,
+            "70대+": 6920111,
+        },
+    }
+
+
 def get_hardcoded_data():
     """하드코딩된 데이터를 반환합니다 (CSV 로드 실패 시 사용)."""
 
@@ -102,6 +310,9 @@ def get_hardcoded_data():
 
 # 데이터 로드
 LINE_CHART_DATA, BAR_CHART_DATA = load_chart_data()
+GENDER_PIE_DATA = load_gender_population_data()
+AREA_POPULATION_DATA = load_area_population_data()
+AGE_GENDER_DATA = load_age_gender_population_data()
 
 # ===== Vega-Lite Specs =====
 
@@ -214,6 +425,61 @@ def get_vega_lite_bar_chart_spec():
         },
         "config": {
             "axis": {"labelFontSize": 12, "titleFontSize": 14},
+            "title": {"fontSize": 16, "fontWeight": "bold"},
+        },
+    }
+
+
+def get_vega_lite_pie_chart_spec():
+    """성별 유동인구 비율 - Vega-Lite 파이 차트 사양"""
+    gender_data = GENDER_PIE_DATA
+    data = [{"성별": k, "인구수": v} for k, v in gender_data.items()]
+    # total = sum(gender_data.values())  # 사용되지 않음
+
+    # 퍼센트 계산
+    for item in data:
+        item["비율"] = round((item["인구수"] / sum(gender_data.values())) * 100, 1)
+
+    return {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "title": {
+            "text": "성별 유동인구 비율 (2024)",
+            "fontSize": 16,
+            "fontWeight": "bold",
+        },
+        "width": 400,
+        "height": 400,
+        "data": {"values": data},
+        "mark": {"type": "arc", "innerRadius": 0, "outerRadius": 100},
+        "encoding": {
+            "theta": {
+                "field": "인구수",
+                "type": "quantitative",
+                "scale": {"type": "linear"},
+            },
+            "color": {
+                "field": "성별",
+                "type": "nominal",
+                "scale": {"domain": ["남성", "여성"], "range": ["#87ceeb", "#ffb6c1"]},
+                "legend": {
+                    "orient": "bottom",
+                    "labelFontSize": 12,
+                    "titleFontSize": 12,
+                },
+            },
+            "tooltip": [
+                {"field": "성별", "type": "nominal"},
+                {"field": "인구수", "type": "quantitative", "title": "인구수", "format": ","},
+                {
+                    "field": "비율",
+                    "type": "quantitative",
+                    "title": "비율 (%)",
+                    "format": ".1f",
+                },
+            ],
+        },
+        "view": {"stroke": None},
+        "config": {
             "title": {"fontSize": 16, "fontWeight": "bold"},
         },
     }
@@ -334,6 +600,63 @@ def get_echarts_bar_chart_option():
     }
 
 
+def get_echarts_pie_chart_option():
+    """성별 유동인구 비율 - ECharts 파이 차트 옵션"""
+    gender_data = GENDER_PIE_DATA
+    data = []
+    # total = sum(gender_data.values())  # 사용되지 않음
+
+    for name, value in gender_data.items():
+        percentage = round((value / sum(gender_data.values())) * 100, 1)
+        data.append(
+            {
+                "name": name,
+                "value": value,
+                "label": {"formatter": f"{name}\n{value:,}명\n({percentage}%)"},
+            }
+        )
+
+    return {
+        "title": {
+            "text": "성별 유동인구 비율 (2024)",
+            "left": "center",
+            "textStyle": {"fontSize": 16, "fontWeight": "bold"},
+        },
+        "tooltip": {"trigger": "item", "formatter": "{a} <br/>{b}: {c}명 ({d}%)"},
+        "legend": {
+            "orient": "horizontal",
+            "bottom": "5%",
+            "left": "center",
+            "textStyle": {"fontSize": 12},
+        },
+        "series": [
+            {
+                "name": "유동인구",
+                "type": "pie",
+                "radius": ["40%", "70%"],
+                "center": ["50%", "50%"],
+                "data": data,
+                "emphasis": {
+                    "itemStyle": {
+                        "shadowBlur": 10,
+                        "shadowOffsetX": 0,
+                        "shadowColor": "rgba(0, 0, 0, 0.5)",
+                    }
+                },
+                "label": {
+                    "show": True,
+                    "position": "outside",
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                },
+                "labelLine": {"show": True},
+                "itemStyle": {"color": {"남성": "#87ceeb", "여성": "#ffb6c1"}},
+            }
+        ],
+        "color": ["#87ceeb", "#ffb6c1"],
+    }
+
+
 # ===== Plotly Specs =====
 
 
@@ -438,6 +761,52 @@ def get_plotly_bar_chart_figure():
             },
             "showlegend": False,
             "margin": {"l": 60, "r": 30, "t": 60, "b": 60},
+        },
+    }
+
+
+def get_plotly_pie_chart_figure():
+    """성별 유동인구 비율 - Plotly 파이 차트 사양"""
+    gender_data = GENDER_PIE_DATA
+    labels = list(gender_data.keys())
+    values = list(gender_data.values())
+    # total = sum(values)  # 사용되지 않음
+
+    # 퍼센트 계산
+    # percentages = [round((v / total) * 100, 1) for v in values]  # 사용되지 않음
+
+    return {
+        "data": [
+            {
+                "labels": labels,
+                "values": values,
+                "type": "pie",
+                "hole": 0.3,  # 도넛 차트
+                "marker": {
+                    "colors": ["#87ceeb", "#ffb6c1"],
+                    "line": {"color": "#000000", "width": 2},
+                },
+                "textinfo": "label+percent",
+                "textposition": "outside",
+                "hovertemplate": (
+                    "<b>%{label}</b><br>"
+                    "인구수: %{value:,}명<br>"
+                    "비율: %{percent}<br>"
+                    "<extra></extra>"
+                ),
+                "textfont": {"size": 12, "color": "black"},
+                "showlegend": True,
+            }
+        ],
+        "layout": {
+            "title": {
+                "text": "성별 유동인구 비율 (2024)",
+                "font": {"size": 18, "color": "black"},
+            },
+            "legend": {"orientation": "h", "x": 0.5, "xanchor": "center", "y": -0.1},
+            "margin": {"l": 30, "r": 30, "t": 60, "b": 60},
+            "width": 500,
+            "height": 500,
         },
     }
 
@@ -554,20 +923,203 @@ def get_chartjs_bar_chart_config():
     }
 
 
+def get_chartjs_pie_chart_config():
+    """성별 유동인구 비율 - Chart.js 파이 차트 설정"""
+    gender_data = GENDER_PIE_DATA
+    labels = list(gender_data.keys())
+    data = list(gender_data.values())
+
+    return {
+        "type": "pie",
+        "data": {
+            "labels": labels,
+            "datasets": [
+                {
+                    "label": "유동인구",
+                    "data": data,
+                    "backgroundColor": ["#87ceeb", "#ffb6c1"],
+                    "borderColor": ["#4682b4", "#ff69b4"],
+                    "borderWidth": 2,
+                }
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "성별 유동인구 비율 (2024)",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {
+                    "position": "bottom",
+                    "labels": {"padding": 20, "font": {"size": 14}},
+                },
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { "
+                            "const total = context.dataset.data.reduce((a, b) => a + b, 0); "
+                            "const percentage = ((context.raw / total) * 100).toFixed(1); "
+                            "return context.label + ': ' + context.raw.toLocaleString() + '명 (' + percentage + '%)'; "
+                            "}"
+                        )
+                    }
+                },
+            },
+        },
+    }
+
+
+def get_chartjs_area_population_config():
+    """읍면동별 총 유동인구 - Chart.js 막대 차트 설정"""
+    area_data = AREA_POPULATION_DATA
+    labels = list(area_data.keys())
+    data = list(area_data.values())
+
+    return {
+        "type": "bar",
+        "data": {
+            "labels": labels,
+            "datasets": [
+                {
+                    "label": "총 유동인구",
+                    "data": data,
+                    "backgroundColor": "rgba(135, 206, 235, 0.7)",
+                    "borderColor": "#87ceeb",
+                    "borderWidth": 1,
+                }
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": (
+                        "포천시 읍면동별 총 유동인구 (2024)"
+                    ),
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": False},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                        "function(context) { return context.parsed.y.toLocaleString() + '명'; }"
+                    )
+                    }
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "읍면동"},
+                    "ticks": {"maxRotation": 45, "minRotation": 45},
+                },
+                "y": {
+                    "title": {"display": True, "text": "총 유동인구 (명)"},
+                    "beginAtZero": True,
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toLocaleString(); }"
+                        )
+                    },
+                },
+            },
+        },
+    }
+
+
+def get_chartjs_age_gender_config():
+    """연령대별 성별 유동인구 - Chart.js 막대 차트 설정"""
+    age_gender_data = AGE_GENDER_DATA
+    age_labels = list(age_gender_data["남성"].keys())
+
+    return {
+        "type": "bar",
+        "data": {
+            "labels": age_labels,
+            "datasets": [
+                {
+                    "label": "남성",
+                    "data": [age_gender_data["남성"][age] for age in age_labels],
+                    "backgroundColor": "rgba(31, 119, 180, 0.7)",
+                    "borderColor": "#1f77b4",
+                    "borderWidth": 1,
+                },
+                {
+                    "label": "여성",
+                    "data": [age_gender_data["여성"][age] for age in age_labels],
+                    "backgroundColor": "rgba(255, 182, 193, 0.7)",
+                    "borderColor": "#ffb6c1",
+                    "borderWidth": 1,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": (
+                        "연령대별 성별 유동인구 (2024)"
+                    ),
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {
+                    "position": "top",
+                    "labels": {"padding": 20, "font": {"size": 14}},
+                },
+                "tooltip": {
+                    "mode": "index",
+                    "intersect": False,
+                    "callbacks": {
+                        "label": (
+                        "function(context) { return context.dataset.label + ': ' + "
+                        "context.parsed.y.toLocaleString() + '명'; }"
+                    )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "연령대"},
+                    "ticks": {"maxRotation": 45, "minRotation": 45},
+                },
+                "y": {
+                    "title": {"display": True, "text": "유동인구 (명)"},
+                    "beginAtZero": True,
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toLocaleString(); }"
+                        )
+                    },
+                },
+            },
+        },
+    }
+
+
 # ===== 사용 예시 =====
 
 if __name__ == "__main__":
-    print("=== 가맹점수 분석 차트 사양 파일 ===")
+    print("=== 가맹점수 분석 및 유동인구 차트 사양 파일 ===")
     print("\n사용 가능한 차트 사양:")
     print(
-        "1. Vega-Lite: get_vega_lite_line_chart_spec(), get_vega_lite_bar_chart_spec()"
+        "1. Vega-Lite: get_vega_lite_line_chart_spec(), get_vega_lite_bar_chart_spec(), get_vega_lite_pie_chart_spec()"
     )
-    print("2. ECharts: get_echarts_line_chart_option(), get_echarts_bar_chart_option()")
-    print("3. Plotly: get_plotly_line_chart_figure(), get_plotly_bar_chart_figure()")
     print(
-        "4. Chart.js: get_chartjs_line_chart_config(), get_chartjs_bar_chart_config()"
+        "2. ECharts: get_echarts_line_chart_option(), get_echarts_bar_chart_option(), get_echarts_pie_chart_option()"
+    )
+    print(
+        "3. Plotly: get_plotly_line_chart_figure(), get_plotly_bar_chart_figure(), get_plotly_pie_chart_figure()"
+    )
+    print(
+        "4. Chart.js: get_chartjs_line_chart_config(), get_chartjs_bar_chart_config(), get_chartjs_pie_chart_config(), get_chartjs_area_population_config(), get_chartjs_age_gender_config()"
     )
 
     print("\n=== 데이터 구조 ===")
     print("라인 차트 데이터:", LINE_CHART_DATA)
     print("바 차트 데이터:", BAR_CHART_DATA)
+    print("파이 차트 데이터:", GENDER_PIE_DATA)
+    print("읍면동별 유동인구 데이터:", AREA_POPULATION_DATA)
+    print("연령대별 성별 유동인구 데이터:", AGE_GENDER_DATA)

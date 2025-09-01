@@ -9,16 +9,25 @@ from flask_cors import CORS
 from flask_restx import Api, Resource, fields
 
 from chart_specs import (
+    AGE_GENDER_DATA,
+    AREA_POPULATION_DATA,
     BAR_CHART_DATA,
+    GENDER_PIE_DATA,
     LINE_CHART_DATA,
+    get_chartjs_age_gender_config,
+    get_chartjs_area_population_config,
     get_chartjs_bar_chart_config,
     get_chartjs_line_chart_config,
+    get_chartjs_pie_chart_config,
     get_echarts_bar_chart_option,
     get_echarts_line_chart_option,
+    get_echarts_pie_chart_option,
     get_plotly_bar_chart_figure,
     get_plotly_line_chart_figure,
+    get_plotly_pie_chart_figure,
     get_vega_lite_bar_chart_spec,
     get_vega_lite_line_chart_spec,
+    get_vega_lite_pie_chart_spec,
 )
 
 app = Flask(__name__)
@@ -89,18 +98,24 @@ class AllCharts(Resource):
                 "vega_lite": {
                     "line_chart": get_vega_lite_line_chart_spec(),
                     "bar_chart": get_vega_lite_bar_chart_spec(),
+                    "pie_chart": get_vega_lite_pie_chart_spec(),
                 },
                 "echarts": {
                     "line_chart": get_echarts_line_chart_option(),
                     "bar_chart": get_echarts_bar_chart_option(),
+                    "pie_chart": get_echarts_pie_chart_option(),
                 },
                 "plotly": {
                     "line_chart": get_plotly_line_chart_figure(),
                     "bar_chart": get_plotly_bar_chart_figure(),
+                    "pie_chart": get_plotly_pie_chart_figure(),
                 },
                 "chartjs": {
                     "line_chart": get_chartjs_line_chart_config(),
                     "bar_chart": get_chartjs_bar_chart_config(),
+                    "pie_chart": get_chartjs_pie_chart_config(),
+                    "area_population": get_chartjs_area_population_config(),
+                    "age_gender": get_chartjs_age_gender_config(),
                 },
             },
         }
@@ -109,7 +124,9 @@ class AllCharts(Resource):
 @charts_ns.route("/vega_lite")
 class VegaLiteCharts(Resource):
     @api.doc("get_vega_lite_charts")
-    @api.param("type", "차트 타입 (line, bar, all)", enum=["line", "bar", "all"])
+    @api.param(
+        "type", "차트 타입 (line, bar, pie, all)", enum=["line", "bar", "pie", "all"]
+    )
     @api.response(200, "Success")
     def get(self):
         """Vega-Lite 차트 사양만 반환"""
@@ -119,17 +136,22 @@ class VegaLiteCharts(Resource):
             return get_vega_lite_line_chart_spec()
         elif chart_type == "bar":
             return get_vega_lite_bar_chart_spec()
+        elif chart_type == "pie":
+            return get_vega_lite_pie_chart_spec()
         else:
             return {
                 "line_chart": get_vega_lite_line_chart_spec(),
                 "bar_chart": get_vega_lite_bar_chart_spec(),
+                "pie_chart": get_vega_lite_pie_chart_spec(),
             }
 
 
 @charts_ns.route("/echarts")
 class EChartsCharts(Resource):
     @api.doc("get_echarts_charts")
-    @api.param("type", "차트 타입 (line, bar, all)", enum=["line", "bar", "all"])
+    @api.param(
+        "type", "차트 타입 (line, bar, pie, all)", enum=["line", "bar", "pie", "all"]
+    )
     @api.response(200, "Success")
     def get(self):
         """ECharts 차트 옵션만 반환"""
@@ -139,17 +161,22 @@ class EChartsCharts(Resource):
             return get_echarts_line_chart_option()
         elif chart_type == "bar":
             return get_echarts_bar_chart_option()
+        elif chart_type == "pie":
+            return get_echarts_pie_chart_option()
         else:
             return {
                 "line_chart": get_echarts_line_chart_option(),
                 "bar_chart": get_echarts_bar_chart_option(),
+                "pie_chart": get_echarts_pie_chart_option(),
             }
 
 
 @charts_ns.route("/plotly")
 class PlotlyCharts(Resource):
     @api.doc("get_plotly_charts")
-    @api.param("type", "차트 타입 (line, bar, all)", enum=["line", "bar", "all"])
+    @api.param(
+        "type", "차트 타입 (line, bar, pie, all)", enum=["line", "bar", "pie", "all"]
+    )
     @api.response(200, "Success")
     def get(self):
         """Plotly 차트 figure만 반환"""
@@ -159,17 +186,24 @@ class PlotlyCharts(Resource):
             return get_plotly_line_chart_figure()
         elif chart_type == "bar":
             return get_plotly_bar_chart_figure()
+        elif chart_type == "pie":
+            return get_plotly_pie_chart_figure()
         else:
             return {
                 "line_chart": get_plotly_line_chart_figure(),
                 "bar_chart": get_plotly_bar_chart_figure(),
+                "pie_chart": get_plotly_pie_chart_figure(),
             }
 
 
 @charts_ns.route("/chartjs")
 class ChartJSCharts(Resource):
     @api.doc("get_chartjs_charts")
-    @api.param("type", "차트 타입 (line, bar, all)", enum=["line", "bar", "all"])
+    @api.param(
+        "type",
+        "차트 타입 (line, bar, pie, area_population, age_gender, all)",
+        enum=["line", "bar", "pie", "area_population", "age_gender", "all"],
+    )
     @api.response(200, "Success")
     def get(self):
         """Chart.js 차트 설정만 반환"""
@@ -179,17 +213,30 @@ class ChartJSCharts(Resource):
             return get_chartjs_line_chart_config()
         elif chart_type == "bar":
             return get_chartjs_bar_chart_config()
+        elif chart_type == "pie":
+            return get_chartjs_pie_chart_config()
+        elif chart_type == "area_population":
+            return get_chartjs_area_population_config()
+        elif chart_type == "age_gender":
+            return get_chartjs_age_gender_config()
         else:
             return {
                 "line_chart": get_chartjs_line_chart_config(),
                 "bar_chart": get_chartjs_bar_chart_config(),
+                "pie_chart": get_chartjs_pie_chart_config(),
+                "area_population": get_chartjs_area_population_config(),
+                "age_gender": get_chartjs_age_gender_config(),
             }
 
 
 @data_ns.route("/")
 class ChartData(Resource):
     @api.doc("get_chart_data")
-    @api.param("type", "데이터 타입 (line, bar, all)", enum=["line", "bar", "all"])
+    @api.param(
+        "type",
+        "데이터 타입 (line, bar, pie, area_population, age_gender, all)",
+        enum=["line", "bar", "pie", "area_population", "age_gender", "all"],
+    )
     @api.response(200, "Success")
     def get(self):
         """원본 차트 데이터 반환"""
@@ -199,10 +246,19 @@ class ChartData(Resource):
             return LINE_CHART_DATA
         elif data_type == "bar":
             return BAR_CHART_DATA
+        elif data_type == "pie":
+            return GENDER_PIE_DATA
+        elif data_type == "area_population":
+            return AREA_POPULATION_DATA
+        elif data_type == "age_gender":
+            return AGE_GENDER_DATA
         else:
             return {
                 "line_chart_data": LINE_CHART_DATA,
                 "bar_chart_data": BAR_CHART_DATA,
+                "pie_chart_data": GENDER_PIE_DATA,
+                "area_population_data": AREA_POPULATION_DATA,
+                "age_gender_data": AGE_GENDER_DATA,
             }
 
 
@@ -212,7 +268,7 @@ class SpecificChart(Resource):
     @api.param(
         "library", "차트 라이브러리", enum=["vega_lite", "echarts", "plotly", "chartjs"]
     )
-    @api.param("chart_type", "차트 타입", enum=["line", "bar"])
+    @api.param("chart_type", "차트 타입", enum=["line", "bar", "pie"])
     @api.response(200, "Success")
     @api.response(400, "Bad Request", error_model)
     @api.response(500, "Internal Server Error", error_model)
@@ -223,18 +279,24 @@ class SpecificChart(Resource):
             "vega_lite": {
                 "line": get_vega_lite_line_chart_spec,
                 "bar": get_vega_lite_bar_chart_spec,
+                "pie": get_vega_lite_pie_chart_spec,
             },
             "echarts": {
                 "line": get_echarts_line_chart_option,
                 "bar": get_echarts_bar_chart_option,
+                "pie": get_echarts_pie_chart_option,
             },
             "plotly": {
                 "line": get_plotly_line_chart_figure,
                 "bar": get_plotly_bar_chart_figure,
+                "pie": get_plotly_pie_chart_figure,
             },
             "chartjs": {
                 "line": get_chartjs_line_chart_config,
                 "bar": get_chartjs_bar_chart_config,
+                "pie": get_chartjs_pie_chart_config,
+                "area_population": get_chartjs_area_population_config,
+                "age_gender": get_chartjs_age_gender_config,
             },
         }
 
