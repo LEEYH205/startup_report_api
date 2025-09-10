@@ -12,16 +12,22 @@ from chart_specs import (
     AGE_GENDER_DATA,
     AREA_POPULATION_DATA,
     BAR_CHART_DATA,
+    CLOSING_RATE_DATA,
     GENDER_PIE_DATA,
     GROWTH_RATE_DATA,
     LINE_CHART_DATA,
+    NET_GROWTH_RATE_DATA,
+    OPENING_CLOSING_RATE_DATA,
     TIME_PERIOD_DATA,
     YEARLY_TREND_DATA,
     get_chartjs_age_gender_config,
     get_chartjs_area_population_config,
     get_chartjs_bar_chart_config,
+    get_chartjs_closing_rate_config,
     get_chartjs_growth_rate_config,
     get_chartjs_line_chart_config,
+    get_chartjs_net_growth_rate_config,
+    get_chartjs_opening_closing_rate_config,
     get_chartjs_pie_chart_config,
     get_chartjs_time_period_config,
     get_chartjs_yearly_trend_config,
@@ -125,6 +131,9 @@ class AllCharts(Resource):
                     "time_period": get_chartjs_time_period_config(),
                     "yearly_trend": get_chartjs_yearly_trend_config(),
                     "growth_rate": get_chartjs_growth_rate_config(),
+                    "closing_rate": get_chartjs_closing_rate_config(),
+                    "opening_closing_rate": get_chartjs_opening_closing_rate_config(),
+                    "net_growth_rate": get_chartjs_net_growth_rate_config(),
                 },
             },
         }
@@ -211,7 +220,8 @@ class ChartJSCharts(Resource):
     @api.param(
         "type",
         "차트 타입 (line, bar, pie, area_population, age_gender, "
-        "time_period, yearly_trend, growth_rate, all)",
+        "time_period, yearly_trend, growth_rate, closing_rate, "
+        "opening_closing_rate, net_growth_rate, all)",
         enum=[
             "line",
             "bar",
@@ -221,6 +231,9 @@ class ChartJSCharts(Resource):
             "time_period",
             "yearly_trend",
             "growth_rate",
+            "closing_rate",
+            "opening_closing_rate",
+            "net_growth_rate",
             "all",
         ],
     )
@@ -245,6 +258,12 @@ class ChartJSCharts(Resource):
             return get_chartjs_yearly_trend_config()
         elif chart_type == "growth_rate":
             return get_chartjs_growth_rate_config()
+        elif chart_type == "closing_rate":
+            return get_chartjs_closing_rate_config()
+        elif chart_type == "opening_closing_rate":
+            return get_chartjs_opening_closing_rate_config()
+        elif chart_type == "net_growth_rate":
+            return get_chartjs_net_growth_rate_config()
         else:
             return {
                 "line_chart": get_chartjs_line_chart_config(),
@@ -255,6 +274,9 @@ class ChartJSCharts(Resource):
                 "time_period": get_chartjs_time_period_config(),
                 "yearly_trend": get_chartjs_yearly_trend_config(),
                 "growth_rate": get_chartjs_growth_rate_config(),
+                "closing_rate": get_chartjs_closing_rate_config(),
+                "opening_closing_rate": get_chartjs_opening_closing_rate_config(),
+                "net_growth_rate": get_chartjs_net_growth_rate_config(),
             }
 
 
@@ -264,7 +286,8 @@ class ChartData(Resource):
     @api.param(
         "type",
         "데이터 타입 (line, bar, pie, area_population, age_gender, "
-        "time_period, yearly_trend, growth_rate, all)",
+        "time_period, yearly_trend, growth_rate, closing_rate, "
+        "opening_closing_rate, net_growth_rate, all)",
         enum=[
             "line",
             "bar",
@@ -274,6 +297,9 @@ class ChartData(Resource):
             "time_period",
             "yearly_trend",
             "growth_rate",
+            "closing_rate",
+            "opening_closing_rate",
+            "net_growth_rate",
             "all",
         ],
     )
@@ -298,6 +324,12 @@ class ChartData(Resource):
             return YEARLY_TREND_DATA
         elif data_type == "growth_rate":
             return GROWTH_RATE_DATA
+        elif data_type == "closing_rate":
+            return CLOSING_RATE_DATA
+        elif data_type == "opening_closing_rate":
+            return OPENING_CLOSING_RATE_DATA
+        elif data_type == "net_growth_rate":
+            return NET_GROWTH_RATE_DATA
         else:
             return {
                 "line_chart_data": LINE_CHART_DATA,
@@ -308,6 +340,9 @@ class ChartData(Resource):
                 "time_period_data": TIME_PERIOD_DATA,
                 "yearly_trend_data": YEARLY_TREND_DATA,
                 "growth_rate_data": GROWTH_RATE_DATA,
+                "closing_rate_data": CLOSING_RATE_DATA,
+                "opening_closing_rate_data": OPENING_CLOSING_RATE_DATA,
+                "net_growth_rate_data": NET_GROWTH_RATE_DATA,
             }
 
 
@@ -329,6 +364,9 @@ class SpecificChart(Resource):
             "time_period",
             "yearly_trend",
             "growth_rate",
+            "closing_rate",
+            "opening_closing_rate",
+            "net_growth_rate",
         ],
     )
     @api.response(200, "Success")
@@ -362,6 +400,9 @@ class SpecificChart(Resource):
                 "time_period": get_chartjs_time_period_config,
                 "yearly_trend": get_chartjs_yearly_trend_config,
                 "growth_rate": get_chartjs_growth_rate_config,
+                "closing_rate": get_chartjs_closing_rate_config,
+                "opening_closing_rate": get_chartjs_opening_closing_rate_config,
+                "net_growth_rate": get_chartjs_net_growth_rate_config,
             },
         }
 

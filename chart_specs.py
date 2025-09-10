@@ -514,6 +514,227 @@ def get_hardcoded_time_period_data():
     }
 
 
+def load_closing_rate_data():
+    """연도별 폐점률 데이터를 로드합니다."""
+    try:
+        # CSV 파일 경로
+        retail_file = "data/주요도소매별_가맹점_개폐점현황.csv"
+        service_file = "data/주요서비스별_가맹점_개폐점현황.csv"
+        food_file = "data/주요외식별_가맹점_개폐점현황.csv"
+
+        # 파일 존재 확인
+        if not all(os.path.exists(f) for f in [retail_file, service_file, food_file]):
+            print("⚠️ 폐점률 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+            return get_hardcoded_closing_rate_data()
+
+        # CSV 파일 로드
+        retail_df = pd.read_csv(retail_file)
+        service_df = pd.read_csv(service_file)
+        food_df = pd.read_csv(food_file)
+
+        # 연도별 평균 폐점률 계산
+        retail_closing = retail_df.groupby("yr")["endCncltnRt"].mean()
+        service_closing = service_df.groupby("yr")["endCncltnRt"].mean()
+        food_closing = food_df.groupby("yr")["endCncltnRt"].mean()
+
+        closing_rate_data = {
+            "도소매": retail_closing.to_dict(),
+            "서비스": service_closing.to_dict(),
+            "외식": food_closing.to_dict(),
+        }
+
+        print("✅ 연도별 폐점률 데이터를 성공적으로 로드했습니다.")
+        return closing_rate_data
+
+    except Exception as e:
+        print(f"⚠️ 폐점률 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_closing_rate_data()
+
+
+def get_hardcoded_closing_rate_data():
+    """하드코딩된 연도별 폐점률 데이터를 반환합니다."""
+    return {
+        "도소매": {
+            2017: 7.7,
+            2018: 6.0,
+            2019: 8.9,
+            2020: 12.0,
+            2021: 10.7,
+            2022: 10.6,
+            2023: 8.8,
+            2024: 10.6,
+        },
+        "서비스": {
+            2017: 12.9,
+            2018: 11.9,
+            2019: 10.4,
+            2020: 10.9,
+            2021: 9.8,
+            2022: 8.7,
+            2023: 12.1,
+            2024: 11.3,
+        },
+        "외식": {
+            2017: 13.8,
+            2018: 12.2,
+            2019: 11.4,
+            2020: 11.9,
+            2021: 12.3,
+            2022: 13.2,
+            2023: 16.1,
+            2024: 16.4,
+        },
+    }
+
+
+def load_opening_closing_rate_data():
+    """2024년 업종별 개폐점률 데이터를 로드합니다."""
+    try:
+        # CSV 파일 경로
+        retail_file = "data/주요도소매별_가맹점_개폐점현황.csv"
+        service_file = "data/주요서비스별_가맹점_개폐점현황.csv"
+        food_file = "data/주요외식별_가맹점_개폐점현황.csv"
+
+        # 파일 존재 확인
+        if not all(os.path.exists(f) for f in [retail_file, service_file, food_file]):
+            print("⚠️ 개폐점률 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+            return get_hardcoded_opening_closing_rate_data()
+
+        # CSV 파일 로드
+        retail_df = pd.read_csv(retail_file)
+        service_df = pd.read_csv(service_file)
+        food_df = pd.read_csv(food_file)
+
+        # 2024년 데이터만 필터링
+        retail_2024 = retail_df[retail_df["yr"] == 2024]
+        service_2024 = service_df[service_df["yr"] == 2024]
+        food_2024 = food_df[food_df["yr"] == 2024]
+
+        opening_closing_data = {
+            "도소매": {
+                "업종": retail_2024["indutyMlsfcNm"].tolist(),
+                "개점률": retail_2024["newFrcsRt"].tolist(),
+                "폐점률": retail_2024["endCncltnRt"].tolist(),
+            },
+            "서비스": {
+                "업종": service_2024["indutyMlsfcNm"].tolist(),
+                "개점률": service_2024["newFrcsRt"].tolist(),
+                "폐점률": service_2024["endCncltnRt"].tolist(),
+            },
+            "외식": {
+                "업종": food_2024["indutyMlsfcNm"].tolist(),
+                "개점률": food_2024["newFrcsRt"].tolist(),
+                "폐점률": food_2024["endCncltnRt"].tolist(),
+            },
+        }
+
+        print("✅ 2024년 업종별 개폐점률 데이터를 성공적으로 로드했습니다.")
+        return opening_closing_data
+
+    except Exception as e:
+        print(f"⚠️ 개폐점률 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_opening_closing_rate_data()
+
+
+def get_hardcoded_opening_closing_rate_data():
+    """하드코딩된 2024년 업종별 개폐점률 데이터를 반환합니다."""
+    return {
+        "도소매": {
+            "업종": ["편의점", "기타도소매", "화장품", "(건강)식품", "종합소매점"],
+            "개점률": [15.2, 12.8, 8.5, 6.3, 18.2],
+            "폐점률": [10.6, 14.2, 7.8, 9.1, 12.5],
+        },
+        "서비스": {
+            "업종": ["교육(외국어)", "교육(교과)", "자동차관련", "기타교육", "이미용"],
+            "개점률": [11.8, 9.2, 7.5, 8.9, 6.7],
+            "폐점률": [13.2, 11.5, 9.8, 10.2, 8.4],
+        },
+        "외식": {
+            "업종": ["치킨", "한식", "커피", "기타외식", "분식"],
+            "개점률": [14.5, 16.8, 18.2, 12.3, 9.7],
+            "폐점률": [16.4, 18.9, 15.6, 14.2, 11.8],
+        },
+    }
+
+
+def load_net_growth_rate_data():
+    """순증가율 데이터를 로드합니다."""
+    try:
+        # CSV 파일 경로
+        retail_file = "data/주요도소매별_가맹점_개폐점현황.csv"
+        service_file = "data/주요서비스별_가맹점_개폐점현황.csv"
+        food_file = "data/주요외식별_가맹점_개폐점현황.csv"
+
+        # 파일 존재 확인
+        if not all(os.path.exists(f) for f in [retail_file, service_file, food_file]):
+            print("⚠️ 순증가율 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+            return get_hardcoded_net_growth_rate_data()
+
+        # CSV 파일 로드
+        retail_df = pd.read_csv(retail_file)
+        service_df = pd.read_csv(service_file)
+        food_df = pd.read_csv(food_file)
+
+        # 순증가율 계산 (개점률 - 폐점률)
+        retail_df["netGrowthRt"] = retail_df["newFrcsRt"] - retail_df["endCncltnRt"]
+        service_df["netGrowthRt"] = service_df["newFrcsRt"] - service_df["endCncltnRt"]
+        food_df["netGrowthRt"] = food_df["newFrcsRt"] - food_df["endCncltnRt"]
+
+        # 연도별 평균 순증가율
+        retail_net = retail_df.groupby("yr")["netGrowthRt"].mean()
+        service_net = service_df.groupby("yr")["netGrowthRt"].mean()
+        food_net = food_df.groupby("yr")["netGrowthRt"].mean()
+
+        net_growth_data = {
+            "도소매": retail_net.to_dict(),
+            "서비스": service_net.to_dict(),
+            "외식": food_net.to_dict(),
+        }
+
+        print("✅ 순증가율 데이터를 성공적으로 로드했습니다.")
+        return net_growth_data
+
+    except Exception as e:
+        print(f"⚠️ 순증가율 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_net_growth_rate_data()
+
+
+def get_hardcoded_net_growth_rate_data():
+    """하드코딩된 순증가율 데이터를 반환합니다."""
+    return {
+        "도소매": {
+            2017: 10.2,
+            2018: 12.3,
+            2019: 8.1,
+            2020: 2.5,
+            2021: 5.8,
+            2022: 6.4,
+            2023: 9.2,
+            2024: 7.8,
+        },
+        "서비스": {
+            2017: 4.1,
+            2018: 6.2,
+            2019: 8.6,
+            2020: 7.1,
+            2021: 9.2,
+            2022: 11.3,
+            2023: 5.9,
+            2024: 7.7,
+        },
+        "외식": {
+            2017: 2.2,
+            2018: 4.8,
+            2019: 6.6,
+            2020: 5.1,
+            2021: 3.7,
+            2022: 1.8,
+            2023: -1.2,
+            2024: -0.5,
+        },
+    }
+
+
 # 데이터 로드
 LINE_CHART_DATA, BAR_CHART_DATA = load_chart_data()
 GENDER_PIE_DATA = load_gender_population_data()
@@ -522,6 +743,9 @@ AGE_GENDER_DATA = load_age_gender_population_data()
 TIME_PERIOD_DATA = load_time_period_population_data()
 YEARLY_TREND_DATA = load_yearly_trend_data()
 GROWTH_RATE_DATA = load_growth_rate_data()
+CLOSING_RATE_DATA = load_closing_rate_data()
+OPENING_CLOSING_RATE_DATA = load_opening_closing_rate_data()
+NET_GROWTH_RATE_DATA = load_net_growth_rate_data()
 
 # ===== Vega-Lite Specs =====
 
@@ -1522,6 +1746,235 @@ def get_chartjs_growth_rate_config():
                 },
                 "y": {
                     "title": {"display": True, "text": "성장률 (%)"},
+                    "beginAtZero": False,
+                    "grid": {"display": True, "alpha": 0.3},
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+            "elements": {"line": {"tension": 0.1}},
+            "interaction": {"intersect": False, "mode": "index"},
+        },
+    }
+
+
+def get_chartjs_closing_rate_config():
+    """연도별 업종별 평균 폐점률 추이 - Chart.js 라인 차트 설정"""
+    closing_rate_data = CLOSING_RATE_DATA
+    years = sorted(list(closing_rate_data["도소매"].keys()))
+
+    return {
+        "type": "line",
+        "data": {
+            "labels": years,
+            "datasets": [
+                {
+                    "label": "도소매",
+                    "data": [closing_rate_data["도소매"][year] for year in years],
+                    "borderColor": "#1f77b4",
+                    "backgroundColor": "rgba(31, 119, 180, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "circle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "서비스",
+                    "data": [closing_rate_data["서비스"][year] for year in years],
+                    "borderColor": "#ff7f0e",
+                    "backgroundColor": "rgba(255, 127, 14, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "rect",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "외식",
+                    "data": [closing_rate_data["외식"][year] for year in years],
+                    "borderColor": "#2ca02c",
+                    "backgroundColor": "rgba(44, 160, 44, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "triangle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "연도별 업종별 평균 폐점률 추이",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": True, "position": "top"},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "연도"},
+                    "grid": {"display": True, "alpha": 0.3},
+                },
+                "y": {
+                    "title": {"display": True, "text": "폐점률 (%)"},
+                    "beginAtZero": True,
+                    "grid": {"display": True, "alpha": 0.3},
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+        },
+    }
+
+
+def get_chartjs_opening_closing_rate_config():
+    """2024년 업종별 개폐점률 - Chart.js 막대 차트 설정"""
+    opening_closing_data = OPENING_CLOSING_RATE_DATA
+
+    # 도소매 데이터
+    retail_industries = opening_closing_data["도소매"]["업종"]
+    retail_opening = opening_closing_data["도소매"]["개점률"]
+    retail_closing = opening_closing_data["도소매"]["폐점률"]
+
+    return {
+        "type": "bar",
+        "data": {
+            "labels": retail_industries,
+            "datasets": [
+                {
+                    "label": "신규 개점률",
+                    "data": retail_opening,
+                    "backgroundColor": "rgba(54, 162, 235, 0.7)",
+                    "borderColor": "#36a2eb",
+                    "borderWidth": 1,
+                },
+                {
+                    "label": "폐점률",
+                    "data": retail_closing,
+                    "backgroundColor": "rgba(255, 99, 132, 0.7)",
+                    "borderColor": "#ff6384",
+                    "borderWidth": 1,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "2024년 도소매 업종별 개폐점률",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": True, "position": "top"},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "업종"},
+                    "ticks": {"maxRotation": 45, "minRotation": 45},
+                },
+                "y": {
+                    "title": {"display": True, "text": "비율 (%)"},
+                    "beginAtZero": True,
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+        },
+    }
+
+
+def get_chartjs_net_growth_rate_config():
+    """연도별 업종별 평균 순증가율 추이 - Chart.js 라인 차트 설정"""
+    net_growth_data = NET_GROWTH_RATE_DATA
+    years = sorted(list(net_growth_data["도소매"].keys()))
+
+    return {
+        "type": "line",
+        "data": {
+            "labels": years,
+            "datasets": [
+                {
+                    "label": "도소매",
+                    "data": [net_growth_data["도소매"][year] for year in years],
+                    "borderColor": "#1f77b4",
+                    "backgroundColor": "rgba(31, 119, 180, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "circle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "서비스",
+                    "data": [net_growth_data["서비스"][year] for year in years],
+                    "borderColor": "#ff7f0e",
+                    "backgroundColor": "rgba(255, 127, 14, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "rect",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "외식",
+                    "data": [net_growth_data["외식"][year] for year in years],
+                    "borderColor": "#2ca02c",
+                    "backgroundColor": "rgba(44, 160, 44, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "triangle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "연도별 업종별 평균 순증가율 추이",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": True, "position": "top"},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "연도"},
+                    "grid": {"display": True, "alpha": 0.3},
+                },
+                "y": {
+                    "title": {"display": True, "text": "순증가율 (%)"},
                     "beginAtZero": False,
                     "grid": {"display": True, "alpha": 0.3},
                     "ticks": {

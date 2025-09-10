@@ -64,6 +64,18 @@
 - **설명**: 2024년 포천시 시간대별 유동인구 변화 패턴 분석
 - **차트 타입**: 라인 차트 (시간대별 유동인구 수)
 
+### 8. 연도별 업종별 평균 폐점률 추이 (라인 차트)
+- **설명**: 2017년~2024년 동안 도소매, 서비스, 외식 업종의 평균 폐점률 변화 추이
+- **차트 타입**: 라인 차트 (업종별 폐점률 % 표시)
+
+### 9. 2024년 업종별 개폐점률 (막대 차트)
+- **설명**: 2024년 도소매 업종별 신규 개점률과 폐점률 비교 분석
+- **차트 타입**: 그룹 막대 차트 (개점률/폐점률 비교)
+
+### 10. 연도별 업종별 순증가율 추이 (라인 차트)
+- **설명**: 2017년~2024년 동안 업종별 순증가율(개점률 - 폐점률) 변화 추이
+- **차트 타입**: 라인 차트 (순증가율 % 표시)
+
 ## 🛠️ 지원하는 차트 라이브러리
 
 - **Vega-Lite**: 선언적 차트 라이브러리
@@ -113,6 +125,9 @@ pip install -r requirements.txt
 - `지역별_서비스별_가맹점수_현황.csv`
 - `지역별_외식별_가맹점수_현황.csv`
 - `pocheon_population_etl_2024_fixed.csv`
+- `주요도소매별_가맹점_개폐점현황.csv`
+- `주요서비스별_가맹점_개폐점현황.csv`
+- `주요외식별_가맹점_개폐점현황.csv`
 
 ```bash
 # 파일 구조 확인
@@ -121,6 +136,10 @@ ls data/
 # 지역별_도소매별_가맹점수_현황.csv
 # 지역별_서비스별_가맹점수_현황.csv
 # 지역별_외식별_가맹점수_현황.csv
+# pocheon_population_etl_2024_fixed.csv
+# 주요도소매별_가맹점_개폐점현황.csv
+# 주요서비스별_가맹점_개폐점현황.csv
+# 주요외식별_가맹점_개폐점현황.csv
 ```
 
 ### API 서버 실행
@@ -271,6 +290,9 @@ docker-compose logs -f
 - **time_period**: 시간대별 유동인구 변화
 - **yearly_trend**: 연도별 업종별 총 가맹점수 추이
 - **growth_rate**: 연도별 업종별 가맹점수 성장률
+- **closing_rate**: 연도별 업종별 평균 폐점률 추이
+- **opening_closing_rate**: 2024년 업종별 개폐점률
+- **net_growth_rate**: 연도별 업종별 순증가율 추이
 
 ## 📚 API 문서
 
@@ -316,6 +338,15 @@ curl http://localhost:5001/api/charts/chartjs/time_period
 
 # 연도별 성장률 차트
 curl http://localhost:5001/api/charts/chartjs/growth_rate
+
+# 연도별 폐점률 추이 차트
+curl http://localhost:5001/api/charts/chartjs/closing_rate
+
+# 2024년 업종별 개폐점률 차트
+curl http://localhost:5001/api/charts/chartjs/opening_closing_rate
+
+# 연도별 순증가율 추이 차트
+curl http://localhost:5001/api/charts/chartjs/net_growth_rate
 ```
 
 ### 원본 데이터 가져오기
@@ -327,6 +358,9 @@ curl http://localhost:5001/api/data/?type=area_population
 curl http://localhost:5001/api/data/?type=age_gender
 curl http://localhost:5001/api/data/?type=time_period
 curl http://localhost:5001/api/data/?type=growth_rate
+curl http://localhost:5001/api/data/?type=closing_rate
+curl http://localhost:5001/api/data/?type=opening_closing_rate
+curl http://localhost:5001/api/data/?type=net_growth_rate
 ```
 
 ## 🧪 테스트
@@ -537,6 +571,21 @@ new Chart(document.getElementById('time-chart'), timeConfig);
 const growthResponse = await fetch('http://localhost:5001/api/charts/chartjs/growth_rate');
 const growthConfig = await growthResponse.json();
 new Chart(document.getElementById('growth-chart'), growthConfig);
+
+// 연도별 폐점률 추이 차트
+const closingResponse = await fetch('http://localhost:5001/api/charts/chartjs/closing_rate');
+const closingConfig = await closingResponse.json();
+new Chart(document.getElementById('closing-chart'), closingConfig);
+
+// 2024년 업종별 개폐점률 차트
+const openingClosingResponse = await fetch('http://localhost:5001/api/charts/chartjs/opening_closing_rate');
+const openingClosingConfig = await openingClosingResponse.json();
+new Chart(document.getElementById('opening-closing-chart'), openingClosingConfig);
+
+// 연도별 순증가율 추이 차트
+const netGrowthResponse = await fetch('http://localhost:5001/api/charts/chartjs/net_growth_rate');
+const netGrowthConfig = await netGrowthResponse.json();
+new Chart(document.getElementById('net-growth-chart'), netGrowthConfig);
 ```
 
 ## 🔧 문제 해결
@@ -676,9 +725,12 @@ python app.py > app.log 2>&1
 - **연령대별 성별 유동인구**: 10대~70대+ 연령대별 남녀 유동인구 분포
 - **시간대별 유동인구 변화**: 06-09, 09-12, 12-15, 15-18, 18-21, 21-24 시간대별 유동인구 패턴
 - **연도별 가맹점수 성장률**: 2018-2024년 업종별 성장률 변화 추이
+- **연도별 폐점률 추이**: 2017-2024년 업종별 평균 폐점률 변화 분석
+- **2024년 업종별 개폐점률**: 도소매 업종별 신규 개점률과 폐점률 비교
+- **연도별 순증가율 추이**: 2017-2024년 업종별 순증가율(개점률-폐점률) 변화 분석
 
 ### 개선된 기능
 - **실시간 데이터 로드**: CSV 파일에서 동적으로 데이터 로드
 - **하드코딩된 데이터 백업**: CSV 로드 실패 시 하드코딩된 데이터 자동 사용
-- **확장된 API 엔드포인트**: 8가지 차트 타입 지원
+- **확장된 API 엔드포인트**: 11가지 차트 타입 지원
 - **향상된 Chart.js 지원**: 더 많은 차트 타입과 고급 설정 옵션
