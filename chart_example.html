@@ -69,6 +69,16 @@
         <div id="ageGenderChart" class="chart"></div>
     </div>
 
+    <div class="chart-container">
+        <h2>📊 연도별 업종별 총 가맹점수 추이</h2>
+        <div id="yearlyTrendChart" class="chart"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>📈 연도별 업종별 가맹점수 성장률</h2>
+        <div id="growthRateChart" class="chart"></div>
+    </div>
+
     <script>
         // 차트 초기화
         const lineChart = echarts.init(document.getElementById('lineChart'));
@@ -76,6 +86,8 @@
         const pieChart = echarts.init(document.getElementById('pieChart'));
         const areaChart = echarts.init(document.getElementById('areaChart'));
         const ageGenderChart = echarts.init(document.getElementById('ageGenderChart'));
+        const yearlyTrendChart = echarts.init(document.getElementById('yearlyTrendChart'));
+        const growthRateChart = echarts.init(document.getElementById('growthRateChart'));
 
         // 라인 차트 옵션
         const lineOption = {
@@ -420,12 +432,160 @@
             ]
         };
 
+        // 연도별 업종별 총 가맹점수 추이 차트 옵션
+        const yearlyTrendOption = {
+            "title": {
+                "text": "연도별 업종별 총 가맹점수 추이",
+                "left": "center",
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "axisPointer": { "type": "cross" },
+                "formatter": "function(params) { return params[0].name + '<br/>' + params.map(p => p.seriesName + ': ' + p.value.toLocaleString() + '개').join('<br/>'); }"
+            },
+            "legend": {
+                "data": ["도소매", "서비스", "외식"],
+                "top": 30
+            },
+            "grid": {
+                "left": "3%",
+                "right": "4%",
+                "bottom": "3%",
+                "containLabel": true
+            },
+            "xAxis": {
+                "type": "category",
+                "boundaryGap": false,
+                "data": [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+                "name": "연도",
+                "nameLocation": "middle",
+                "nameGap": 30
+            },
+            "yAxis": {
+                "type": "value",
+                "name": "총 가맹점수 (개)",
+                "nameLocation": "middle",
+                "nameGap": 50,
+                "axisLabel": {
+                    "formatter": "function(value) { return value.toLocaleString(); }"
+                }
+            },
+            "series": [
+                {
+                    "name": "도소매",
+                    "type": "line",
+                    "data": [48324, 54194, 55581, 56897, 60874, 63470, 59843, 69293],
+                    "smooth": true,
+                    "symbol": "circle",
+                    "symbolSize": 8,
+                    "lineStyle": { "width": 3 },
+                    "itemStyle": { "color": "#1f77b4" }
+                },
+                {
+                    "name": "서비스",
+                    "type": "line",
+                    "data": [65164, 69518, 69948, 68071, 75102, 93298, 87107, 113790],
+                    "smooth": true,
+                    "symbol": "rect",
+                    "symbolSize": 8,
+                    "lineStyle": { "width": 3 },
+                    "itemStyle": { "color": "#ff7f0e" }
+                },
+                {
+                    "name": "외식",
+                    "type": "line",
+                    "data": [101737, 111586, 117368, 125550, 131085, 157192, 156638, 175768],
+                    "smooth": true,
+                    "symbol": "triangle",
+                    "symbolSize": 8,
+                    "lineStyle": { "width": 3 },
+                    "itemStyle": { "color": "#2ca02c" }
+                }
+            ]
+        };
+
+        // 연도별 업종별 가맹점수 성장률 차트 옵션
+        const growthRateOption = {
+            "title": {
+                "text": "연도별 업종별 가맹점수 성장률",
+                "left": "center",
+                "textStyle": { "fontSize": 16, "fontWeight": "bold" }
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "axisPointer": { "type": "cross" },
+                "formatter": "function(params) { return params[0].name + '<br/>' + params.map(p => p.seriesName + ': ' + p.value.toFixed(2) + '%').join('<br/>'); }"
+            },
+            "legend": {
+                "data": ["도소매", "서비스", "외식"],
+                "top": 30
+            },
+            "grid": {
+                "left": "3%",
+                "right": "4%",
+                "bottom": "3%",
+                "containLabel": true
+            },
+            "xAxis": {
+                "type": "category",
+                "boundaryGap": false,
+                "data": [2018, 2019, 2020, 2021, 2022, 2023, 2024],
+                "name": "연도",
+                "nameLocation": "middle",
+                "nameGap": 30
+            },
+            "yAxis": {
+                "type": "value",
+                "name": "성장률 (%)",
+                "nameLocation": "middle",
+                "nameGap": 50,
+                "axisLabel": {
+                    "formatter": "function(value) { return value.toFixed(1) + '%'; }"
+                }
+            },
+            "series": [
+                {
+                    "name": "도소매",
+                    "type": "line",
+                    "data": [12.15, 2.56, 2.36, 6.99, 4.26, -5.72, 15.80],
+                    "smooth": true,
+                    "symbol": "circle",
+                    "symbolSize": 8,
+                    "lineStyle": { "width": 3 },
+                    "itemStyle": { "color": "#1f77b4" }
+                },
+                {
+                    "name": "서비스",
+                    "type": "line",
+                    "data": [6.68, 0.62, -2.68, 10.33, 24.24, -6.63, 30.60],
+                    "smooth": true,
+                    "symbol": "rect",
+                    "symbolSize": 8,
+                    "lineStyle": { "width": 3 },
+                    "itemStyle": { "color": "#ff7f0e" }
+                },
+                {
+                    "name": "외식",
+                    "type": "line",
+                    "data": [9.68, 5.18, 6.97, 4.41, 19.90, -0.35, 12.22],
+                    "smooth": true,
+                    "symbol": "triangle",
+                    "symbolSize": 8,
+                    "lineStyle": { "width": 3 },
+                    "itemStyle": { "color": "#2ca02c" }
+                }
+            ]
+        };
+
         // 차트 렌더링
         lineChart.setOption(lineOption);
         barChart.setOption(barOption);
         pieChart.setOption(pieOption);
         areaChart.setOption(areaOption);
         ageGenderChart.setOption(ageGenderOption);
+        yearlyTrendChart.setOption(yearlyTrendOption);
+        growthRateChart.setOption(growthRateOption);
 
         // 반응형 처리
         window.addEventListener('resize', function () {
@@ -434,6 +594,8 @@
             pieChart.resize();
             areaChart.resize();
             ageGenderChart.resize();
+            yearlyTrendChart.resize();
+            growthRateChart.resize();
         });
     </script>
 </body>

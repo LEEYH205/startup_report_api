@@ -308,11 +308,220 @@ def get_hardcoded_data():
     return line_data, bar_data
 
 
+def load_yearly_trend_data():
+    """연도별 총 가맹점수 추이 데이터를 로드합니다."""
+    try:
+        # CSV 파일 경로
+        retail_file = "data/지역별_도소매별_가맹점수_현황.csv"
+        service_file = "data/지역별_서비스별_가맹점수_현황.csv"
+        food_file = "data/지역별_외식별_가맹점수_현황.csv"
+
+        # 파일 존재 확인
+        if not all(os.path.exists(f) for f in [retail_file, service_file, food_file]):
+            print("⚠️ 연도별 추이 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+            return get_hardcoded_yearly_trend_data()
+
+        # CSV 파일 로드
+        retail_df = pd.read_csv(retail_file)
+        service_df = pd.read_csv(service_file)
+        food_df = pd.read_csv(food_file)
+
+        # 연도별 총 가맹점수 계산
+        retail_total = retail_df.groupby("yr")["allFrcsCnt"].first()
+        service_total = service_df.groupby("yr")["allFrcsCnt"].first()
+        food_total = food_df.groupby("yr")["allFrcsCnt"].first()
+
+        yearly_trend_data = {
+            "도소매": retail_total.to_dict(),
+            "서비스": service_total.to_dict(),
+            "외식": food_total.to_dict(),
+        }
+
+        print("✅ 연도별 총 가맹점수 추이 데이터를 성공적으로 로드했습니다.")
+        return yearly_trend_data
+
+    except Exception as e:
+        print(f"⚠️ 연도별 추이 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_yearly_trend_data()
+
+
+def get_hardcoded_yearly_trend_data():
+    """하드코딩된 연도별 총 가맹점수 추이 데이터를 반환합니다."""
+    return {
+        "도소매": {
+            2017: 48324,
+            2018: 54194,
+            2019: 55581,
+            2020: 56897,
+            2021: 60874,
+            2022: 63470,
+            2023: 59843,
+            2024: 69293,
+        },
+        "서비스": {
+            2017: 65164,
+            2018: 69518,
+            2019: 69948,
+            2020: 68071,
+            2021: 75102,
+            2022: 93298,
+            2023: 87107,
+            2024: 113790,
+        },
+        "외식": {
+            2017: 101737,
+            2018: 111586,
+            2019: 117368,
+            2020: 125550,
+            2021: 131085,
+            2022: 157192,
+            2023: 156638,
+            2024: 175768,
+        },
+    }
+
+
+def load_growth_rate_data():
+    """연도별 성장률 데이터를 로드합니다."""
+    try:
+        # CSV 파일 경로
+        retail_file = "data/지역별_도소매별_가맹점수_현황.csv"
+        service_file = "data/지역별_서비스별_가맹점수_현황.csv"
+        food_file = "data/지역별_외식별_가맹점수_현황.csv"
+
+        # 파일 존재 확인
+        if not all(os.path.exists(f) for f in [retail_file, service_file, food_file]):
+            print("⚠️ 성장률 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+            return get_hardcoded_growth_rate_data()
+
+        # CSV 파일 로드
+        retail_df = pd.read_csv(retail_file)
+        service_df = pd.read_csv(service_file)
+        food_df = pd.read_csv(food_file)
+
+        # 연도별 총 가맹점수 계산
+        retail_total = retail_df.groupby("yr")["allFrcsCnt"].first()
+        service_total = service_df.groupby("yr")["allFrcsCnt"].first()
+        food_total = food_df.groupby("yr")["allFrcsCnt"].first()
+
+        # 성장률 계산 (전년 대비)
+        retail_growth = retail_total.pct_change() * 100
+        service_growth = service_total.pct_change() * 100
+        food_growth = food_total.pct_change() * 100
+
+        growth_rate_data = {
+            "도소매": retail_growth.to_dict(),
+            "서비스": service_growth.to_dict(),
+            "외식": food_growth.to_dict(),
+        }
+
+        print("✅ 연도별 성장률 데이터를 성공적으로 로드했습니다.")
+        return growth_rate_data
+
+    except Exception as e:
+        print(f"⚠️ 성장률 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_growth_rate_data()
+
+
+def get_hardcoded_growth_rate_data():
+    """하드코딩된 연도별 성장률 데이터를 반환합니다."""
+    return {
+        "도소매": {
+            2017: None,
+            2018: 12.15,
+            2019: 2.56,
+            2020: 2.36,
+            2021: 6.99,
+            2022: 4.26,
+            2023: -5.72,
+            2024: 15.80,
+        },
+        "서비스": {
+            2017: None,
+            2018: 6.68,
+            2019: 0.62,
+            2020: -2.68,
+            2021: 10.33,
+            2022: 24.24,
+            2023: -6.63,
+            2024: 30.60,
+        },
+        "외식": {
+            2017: None,
+            2018: 9.68,
+            2019: 5.18,
+            2020: 6.97,
+            2021: 4.41,
+            2022: 19.90,
+            2023: -0.35,
+            2024: 12.22,
+        },
+    }
+
+
+def load_time_period_population_data():
+    """시간대별 유동인구 데이터를 로드합니다."""
+    try:
+        # CSV 파일 경로
+        population_file = "data/pocheon_population_etl_2024_fixed.csv"
+
+        # 파일 존재 확인
+        if not os.path.exists(population_file):
+            print("⚠️ 시간대별 유동인구 CSV 파일을 찾을 수 없습니다. 하드코딩된 데이터를 사용합니다.")
+            return get_hardcoded_time_period_data()
+
+        # CSV 파일 로드
+        df = pd.read_csv(population_file)
+
+        # 시간대별 그룹핑 (6-9, 9-12, 12-15, 15-18, 18-21, 21-24)
+        time_periods = {
+            "06-09": (6, 9),
+            "09-12": (9, 12),
+            "12-15": (12, 15),
+            "15-18": (15, 18),
+            "18-21": (18, 21),
+            "21-24": (21, 24),
+        }
+
+        time_period_data = {}
+        for period_name, (start_hour, end_hour) in time_periods.items():
+            if start_hour == 21:  # 21-24시
+                mask = df["hour"].between(start_hour, 23)
+            else:
+                mask = df["hour"].between(start_hour, end_hour - 1)
+
+            period_data = df[mask]
+            total_population = period_data["total_population"].sum()
+            time_period_data[period_name] = total_population
+
+        print("✅ 시간대별 유동인구 데이터를 성공적으로 로드했습니다.")
+        return time_period_data
+
+    except Exception as e:
+        print(f"⚠️ 시간대별 유동인구 CSV 파일 로드 실패: {e}. 하드코딩된 데이터를 사용합니다.")
+        return get_hardcoded_time_period_data()
+
+
+def get_hardcoded_time_period_data():
+    """하드코딩된 시간대별 유동인구 데이터를 반환합니다."""
+    return {
+        "06-09": 125000,
+        "09-12": 180000,
+        "12-15": 220000,
+        "15-18": 195000,
+        "18-21": 160000,
+        "21-24": 95000,
+    }
+
+
 # 데이터 로드
 LINE_CHART_DATA, BAR_CHART_DATA = load_chart_data()
 GENDER_PIE_DATA = load_gender_population_data()
 AREA_POPULATION_DATA = load_area_population_data()
 AGE_GENDER_DATA = load_age_gender_population_data()
+TIME_PERIOD_DATA = load_time_period_population_data()
+YEARLY_TREND_DATA = load_yearly_trend_data()
+GROWTH_RATE_DATA = load_growth_rate_data()
 
 # ===== Vega-Lite Specs =====
 
@@ -959,9 +1168,13 @@ def get_chartjs_pie_chart_config():
                     "callbacks": {
                         "label": (
                             "function(context) { "
-                            "const total = context.dataset.data.reduce((a, b) => a + b, 0); "
-                            "const percentage = ((context.raw / total) * 100).toFixed(1); "
-                            "return context.label + ': ' + context.raw.toLocaleString() + '명 (' + percentage + '%)'; "
+                            "const total = context.dataset.data.reduce("
+                            "(a, b) => a + b, 0); "
+                            "const percentage = ((context.raw / total) * 100)."
+                            "toFixed(1); "
+                            "return context.label + ': ' + "
+                            "context.raw.toLocaleString() + "
+                            "'명 (' + percentage + '%)'; "
                             "}"
                         )
                     }
@@ -1002,7 +1215,11 @@ def get_chartjs_area_population_config():
                 "legend": {"display": False},
                 "tooltip": {
                     "callbacks": {
-                        "label": "function(context) { return context.parsed.y.toLocaleString() + '명'; }"
+                        "label": (
+                            "function(context) { "
+                            "return context.parsed.y.toLocaleString() + '명'; "
+                            "}"
+                        )
                     }
                 },
             },
@@ -1093,22 +1310,254 @@ def get_chartjs_age_gender_config():
     }
 
 
+def get_chartjs_yearly_trend_config():
+    """연도별 업종별 총 가맹점수 추이 - Chart.js 라인 차트 설정"""
+    yearly_trend_data = YEARLY_TREND_DATA
+    years = sorted(list(yearly_trend_data["도소매"].keys()))
+
+    return {
+        "type": "line",
+        "data": {
+            "labels": years,
+            "datasets": [
+                {
+                    "label": "도소매",
+                    "data": [yearly_trend_data["도소매"][year] for year in years],
+                    "borderColor": "#1f77b4",
+                    "backgroundColor": "rgba(31, 119, 180, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "circle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "서비스",
+                    "data": [yearly_trend_data["서비스"][year] for year in years],
+                    "borderColor": "#ff7f0e",
+                    "backgroundColor": "rgba(255, 127, 14, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "rect",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "외식",
+                    "data": [yearly_trend_data["외식"][year] for year in years],
+                    "borderColor": "#2ca02c",
+                    "backgroundColor": "rgba(44, 160, 44, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "triangle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "연도별 업종별 총 가맹점수 추이",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": True, "position": "top"},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toLocaleString() + '개'; }"
+                        )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "연도"},
+                    "grid": {"display": True, "alpha": 0.3},
+                },
+                "y": {
+                    "title": {"display": True, "text": "총 가맹점수 (개)"},
+                    "beginAtZero": True,
+                    "grid": {"display": True, "alpha": 0.3},
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toLocaleString(); }"
+                        )
+                    },
+                },
+            },
+        },
+    }
+
+
+def get_chartjs_time_period_config():
+    """시간대별 유동인구 변화 - Chart.js 라인 차트 설정"""
+    time_period_data = TIME_PERIOD_DATA
+    time_labels = list(time_period_data.keys())
+    time_values = list(time_period_data.values())
+
+    return {
+        "type": "line",
+        "data": {
+            "labels": time_labels,
+            "datasets": [
+                {
+                    "label": "유동인구",
+                    "data": time_values,
+                    "borderColor": "#ff6b6b",
+                    "backgroundColor": "rgba(255, 107, 107, 0.1)",
+                    "borderWidth": 3,
+                    "pointStyle": "circle",
+                    "pointRadius": 8,
+                    "pointHoverRadius": 10,
+                    "fill": True,
+                    "tension": 0.4,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "시간대별 유동인구 변화",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": True, "position": "top"},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toLocaleString() + '명'; }"
+                        )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "시간대"},
+                    "grid": {"display": True, "alpha": 0.3},
+                },
+                "y": {
+                    "title": {"display": True, "text": "유동인구 (명)"},
+                    "beginAtZero": True,
+                    "grid": {"display": True, "alpha": 0.3},
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toLocaleString(); }"
+                        )
+                    },
+                },
+            },
+        },
+    }
+
+
+def get_chartjs_growth_rate_config():
+    """연도별 업종별 가맹점수 성장률 - Chart.js 라인 차트 설정"""
+    growth_rate_data = GROWTH_RATE_DATA
+    years = sorted(
+        [year for year in growth_rate_data["도소매"].keys() if year is not None]
+    )
+
+    return {
+        "type": "line",
+        "data": {
+            "labels": years,
+            "datasets": [
+                {
+                    "label": "도소매",
+                    "data": [growth_rate_data["도소매"][year] for year in years],
+                    "borderColor": "#1f77b4",
+                    "backgroundColor": "rgba(31, 119, 180, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "circle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "서비스",
+                    "data": [growth_rate_data["서비스"][year] for year in years],
+                    "borderColor": "#ff7f0e",
+                    "backgroundColor": "rgba(255, 127, 14, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "rect",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+                {
+                    "label": "외식",
+                    "data": [growth_rate_data["외식"][year] for year in years],
+                    "borderColor": "#2ca02c",
+                    "backgroundColor": "rgba(44, 160, 44, 0.1)",
+                    "borderWidth": 2,
+                    "pointStyle": "triangle",
+                    "pointRadius": 6,
+                    "pointHoverRadius": 8,
+                },
+            ],
+        },
+        "options": {
+            "responsive": True,
+            "plugins": {
+                "title": {
+                    "display": True,
+                    "text": "연도별 업종별 가맹점수 성장률",
+                    "font": {"size": 16, "weight": "bold"},
+                },
+                "legend": {"display": True, "position": "top"},
+                "tooltip": {
+                    "callbacks": {
+                        "label": (
+                            "function(context) { return context.dataset.label + ': ' + "
+                            "context.parsed.y.toFixed(2) + '%'; }"
+                        )
+                    },
+                },
+            },
+            "scales": {
+                "x": {
+                    "title": {"display": True, "text": "연도"},
+                    "grid": {"display": True, "alpha": 0.3},
+                },
+                "y": {
+                    "title": {"display": True, "text": "성장률 (%)"},
+                    "beginAtZero": False,
+                    "grid": {"display": True, "alpha": 0.3},
+                    "ticks": {
+                        "callback": (
+                            "function(value) { return value.toFixed(1) + '%'; }"
+                        )
+                    },
+                },
+            },
+            "elements": {"line": {"tension": 0.1}},
+            "interaction": {"intersect": False, "mode": "index"},
+        },
+    }
+
+
 # ===== 사용 예시 =====
 
 if __name__ == "__main__":
     print("=== 가맹점수 분석 및 유동인구 차트 사양 파일 ===")
     print("\n사용 가능한 차트 사양:")
     print(
-        "1. Vega-Lite: get_vega_lite_line_chart_spec(), get_vega_lite_bar_chart_spec(), get_vega_lite_pie_chart_spec()"
+        "1. Vega-Lite: get_vega_lite_line_chart_spec(), "
+        "get_vega_lite_bar_chart_spec(), get_vega_lite_pie_chart_spec()"
     )
     print(
-        "2. ECharts: get_echarts_line_chart_option(), get_echarts_bar_chart_option(), get_echarts_pie_chart_option()"
+        "2. ECharts: get_echarts_line_chart_option(), "
+        "get_echarts_bar_chart_option(), get_echarts_pie_chart_option()"
     )
     print(
-        "3. Plotly: get_plotly_line_chart_figure(), get_plotly_bar_chart_figure(), get_plotly_pie_chart_figure()"
+        "3. Plotly: get_plotly_line_chart_figure(), "
+        "get_plotly_bar_chart_figure(), get_plotly_pie_chart_figure()"
     )
     print(
-        "4. Chart.js: get_chartjs_line_chart_config(), get_chartjs_bar_chart_config(), get_chartjs_pie_chart_config(), get_chartjs_area_population_config(), get_chartjs_age_gender_config()"
+        "4. Chart.js: get_chartjs_line_chart_config(), "
+        "get_chartjs_bar_chart_config(), get_chartjs_pie_chart_config(), "
+        "get_chartjs_area_population_config(), get_chartjs_age_gender_config()"
     )
 
     print("\n=== 데이터 구조 ===")

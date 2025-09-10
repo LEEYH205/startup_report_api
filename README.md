@@ -56,6 +56,14 @@
 - **설명**: 2024년 포천시 연령대별 성별 유동인구 분포 분석
 - **차트 타입**: 그룹 막대 차트 (남성/여성 비교)
 
+### 6. 연도별 업종별 가맹점수 성장률 (라인 차트)
+- **설명**: 2018년~2024년 동안 업종별 가맹점수 성장률 변화 추이
+- **차트 타입**: 라인 차트 (성장률 % 표시)
+
+### 7. 시간대별 유동인구 변화 (라인 차트)
+- **설명**: 2024년 포천시 시간대별 유동인구 변화 패턴 분석
+- **차트 타입**: 라인 차트 (시간대별 유동인구 수)
+
 ## 🛠️ 지원하는 차트 라이브러리
 
 - **Vega-Lite**: 선언적 차트 라이브러리
@@ -252,6 +260,17 @@ docker-compose logs -f
 
 ### 데이터 API
 - **GET /api/data** - 원본 차트 데이터
+- **GET /api/data?type={chart_type}** - 특정 차트 타입의 원본 데이터
+
+### 지원하는 차트 타입
+- **line**: 연도별 업종별 총 가맹점수 추이
+- **bar**: 업종별 전체 기간 평균 가맹점수
+- **pie**: 성별 유동인구 비율
+- **area_population**: 읍면동별 총 유동인구
+- **age_gender**: 연령대별 성별 유동인구
+- **time_period**: 시간대별 유동인구 변화
+- **yearly_trend**: 연도별 업종별 총 가맹점수 추이
+- **growth_rate**: 연도별 업종별 가맹점수 성장률
 
 ## 📚 API 문서
 
@@ -284,11 +303,30 @@ curl http://localhost:5001/api/charts/plotly
 curl http://localhost:5001/api/charts/chartjs
 ```
 
+### 새로운 차트 타입들 가져오기
+```bash
+# 읍면동별 유동인구 차트
+curl http://localhost:5001/api/charts/chartjs/area_population
+
+# 연령대별 성별 유동인구 차트
+curl http://localhost:5001/api/charts/chartjs/age_gender
+
+# 시간대별 유동인구 변화 차트
+curl http://localhost:5001/api/charts/chartjs/time_period
+
+# 연도별 성장률 차트
+curl http://localhost:5001/api/charts/chartjs/growth_rate
+```
+
 ### 원본 데이터 가져오기
 ```bash
 curl http://localhost:5001/api/data/
 curl http://localhost:5001/api/data/?type=line
 curl http://localhost:5001/api/data/?type=bar
+curl http://localhost:5001/api/data/?type=area_population
+curl http://localhost:5001/api/data/?type=age_gender
+curl http://localhost:5001/api/data/?type=time_period
+curl http://localhost:5001/api/data/?type=growth_rate
 ```
 
 ## 🧪 테스트
@@ -472,12 +510,33 @@ await embed('#chart-container', spec);
 ```javascript
 import Chart from 'chart.js/auto';
 
-// 차트 사양 가져오기
+// 기본 차트 사양 가져오기
 const response = await fetch('http://localhost:5001/api/charts/chartjs/line');
 const config = await response.json();
 
 // 차트 렌더링
 new Chart(document.getElementById('chart-canvas'), config);
+
+// 새로운 차트 타입들 사용 예시
+// 읍면동별 유동인구 차트
+const areaResponse = await fetch('http://localhost:5001/api/charts/chartjs/area_population');
+const areaConfig = await areaResponse.json();
+new Chart(document.getElementById('area-chart'), areaConfig);
+
+// 연령대별 성별 유동인구 차트
+const ageGenderResponse = await fetch('http://localhost:5001/api/charts/chartjs/age_gender');
+const ageGenderConfig = await ageGenderResponse.json();
+new Chart(document.getElementById('age-gender-chart'), ageGenderConfig);
+
+// 시간대별 유동인구 변화 차트
+const timeResponse = await fetch('http://localhost:5001/api/charts/chartjs/time_period');
+const timeConfig = await timeResponse.json();
+new Chart(document.getElementById('time-chart'), timeConfig);
+
+// 연도별 성장률 차트
+const growthResponse = await fetch('http://localhost:5001/api/charts/chartjs/growth_rate');
+const growthConfig = await growthResponse.json();
+new Chart(document.getElementById('growth-chart'), growthConfig);
 ```
 
 ## 🔧 문제 해결
@@ -609,3 +668,17 @@ python app.py > app.log 2>&1
 **이 API를 통해 BE/AI에서 차트 디자인과 데이터를 고정하고, FE는 바인딩만 하면 되므로 일관된 차트를 빠르게 구현할 수 있습니다!** 🎉
 
 **Docker를 통해 간단하고 안정적인 배포가 가능합니다!** 🐳
+
+## 🆕 최신 업데이트
+
+### 추가된 차트 타입 (2025.09)
+- **읍면동별 총 유동인구**: 포천시 14개 읍면동별 유동인구 비교
+- **연령대별 성별 유동인구**: 10대~70대+ 연령대별 남녀 유동인구 분포
+- **시간대별 유동인구 변화**: 06-09, 09-12, 12-15, 15-18, 18-21, 21-24 시간대별 유동인구 패턴
+- **연도별 가맹점수 성장률**: 2018-2024년 업종별 성장률 변화 추이
+
+### 개선된 기능
+- **실시간 데이터 로드**: CSV 파일에서 동적으로 데이터 로드
+- **하드코딩된 데이터 백업**: CSV 로드 실패 시 하드코딩된 데이터 자동 사용
+- **확장된 API 엔드포인트**: 8가지 차트 타입 지원
+- **향상된 Chart.js 지원**: 더 많은 차트 타입과 고급 설정 옵션

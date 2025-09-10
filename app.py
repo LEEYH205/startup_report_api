@@ -13,12 +13,18 @@ from chart_specs import (
     AREA_POPULATION_DATA,
     BAR_CHART_DATA,
     GENDER_PIE_DATA,
+    GROWTH_RATE_DATA,
     LINE_CHART_DATA,
+    TIME_PERIOD_DATA,
+    YEARLY_TREND_DATA,
     get_chartjs_age_gender_config,
     get_chartjs_area_population_config,
     get_chartjs_bar_chart_config,
+    get_chartjs_growth_rate_config,
     get_chartjs_line_chart_config,
     get_chartjs_pie_chart_config,
+    get_chartjs_time_period_config,
+    get_chartjs_yearly_trend_config,
     get_echarts_bar_chart_option,
     get_echarts_line_chart_option,
     get_echarts_pie_chart_option,
@@ -116,6 +122,9 @@ class AllCharts(Resource):
                     "pie_chart": get_chartjs_pie_chart_config(),
                     "area_population": get_chartjs_area_population_config(),
                     "age_gender": get_chartjs_age_gender_config(),
+                    "time_period": get_chartjs_time_period_config(),
+                    "yearly_trend": get_chartjs_yearly_trend_config(),
+                    "growth_rate": get_chartjs_growth_rate_config(),
                 },
             },
         }
@@ -201,8 +210,19 @@ class ChartJSCharts(Resource):
     @api.doc("get_chartjs_charts")
     @api.param(
         "type",
-        "차트 타입 (line, bar, pie, area_population, age_gender, all)",
-        enum=["line", "bar", "pie", "area_population", "age_gender", "all"],
+        "차트 타입 (line, bar, pie, area_population, age_gender, "
+        "time_period, yearly_trend, growth_rate, all)",
+        enum=[
+            "line",
+            "bar",
+            "pie",
+            "area_population",
+            "age_gender",
+            "time_period",
+            "yearly_trend",
+            "growth_rate",
+            "all",
+        ],
     )
     @api.response(200, "Success")
     def get(self):
@@ -219,6 +239,12 @@ class ChartJSCharts(Resource):
             return get_chartjs_area_population_config()
         elif chart_type == "age_gender":
             return get_chartjs_age_gender_config()
+        elif chart_type == "time_period":
+            return get_chartjs_time_period_config()
+        elif chart_type == "yearly_trend":
+            return get_chartjs_yearly_trend_config()
+        elif chart_type == "growth_rate":
+            return get_chartjs_growth_rate_config()
         else:
             return {
                 "line_chart": get_chartjs_line_chart_config(),
@@ -226,6 +252,9 @@ class ChartJSCharts(Resource):
                 "pie_chart": get_chartjs_pie_chart_config(),
                 "area_population": get_chartjs_area_population_config(),
                 "age_gender": get_chartjs_age_gender_config(),
+                "time_period": get_chartjs_time_period_config(),
+                "yearly_trend": get_chartjs_yearly_trend_config(),
+                "growth_rate": get_chartjs_growth_rate_config(),
             }
 
 
@@ -234,8 +263,19 @@ class ChartData(Resource):
     @api.doc("get_chart_data")
     @api.param(
         "type",
-        "데이터 타입 (line, bar, pie, area_population, age_gender, all)",
-        enum=["line", "bar", "pie", "area_population", "age_gender", "all"],
+        "데이터 타입 (line, bar, pie, area_population, age_gender, "
+        "time_period, yearly_trend, growth_rate, all)",
+        enum=[
+            "line",
+            "bar",
+            "pie",
+            "area_population",
+            "age_gender",
+            "time_period",
+            "yearly_trend",
+            "growth_rate",
+            "all",
+        ],
     )
     @api.response(200, "Success")
     def get(self):
@@ -252,6 +292,12 @@ class ChartData(Resource):
             return AREA_POPULATION_DATA
         elif data_type == "age_gender":
             return AGE_GENDER_DATA
+        elif data_type == "time_period":
+            return TIME_PERIOD_DATA
+        elif data_type == "yearly_trend":
+            return YEARLY_TREND_DATA
+        elif data_type == "growth_rate":
+            return GROWTH_RATE_DATA
         else:
             return {
                 "line_chart_data": LINE_CHART_DATA,
@@ -259,6 +305,9 @@ class ChartData(Resource):
                 "pie_chart_data": GENDER_PIE_DATA,
                 "area_population_data": AREA_POPULATION_DATA,
                 "age_gender_data": AGE_GENDER_DATA,
+                "time_period_data": TIME_PERIOD_DATA,
+                "yearly_trend_data": YEARLY_TREND_DATA,
+                "growth_rate_data": GROWTH_RATE_DATA,
             }
 
 
@@ -268,7 +317,20 @@ class SpecificChart(Resource):
     @api.param(
         "library", "차트 라이브러리", enum=["vega_lite", "echarts", "plotly", "chartjs"]
     )
-    @api.param("chart_type", "차트 타입", enum=["line", "bar", "pie"])
+    @api.param(
+        "chart_type",
+        "차트 타입",
+        enum=[
+            "line",
+            "bar",
+            "pie",
+            "area_population",
+            "age_gender",
+            "time_period",
+            "yearly_trend",
+            "growth_rate",
+        ],
+    )
     @api.response(200, "Success")
     @api.response(400, "Bad Request", error_model)
     @api.response(500, "Internal Server Error", error_model)
@@ -297,6 +359,9 @@ class SpecificChart(Resource):
                 "pie": get_chartjs_pie_chart_config,
                 "area_population": get_chartjs_area_population_config,
                 "age_gender": get_chartjs_age_gender_config,
+                "time_period": get_chartjs_time_period_config,
+                "yearly_trend": get_chartjs_yearly_trend_config,
+                "growth_rate": get_chartjs_growth_rate_config,
             },
         }
 
